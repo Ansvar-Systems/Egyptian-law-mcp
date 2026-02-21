@@ -8,8 +8,8 @@
  * Strategy:
  * 1. Discover law detail pages from official categories.
  * 2. Fetch law metadata and official PDF attachment.
- * 3. Extract text via pdftotext and parse article-level provisions.
- * 4. Write seed JSON files under data/seed.
+ * 3. Extract text via pdftotext, optionally fallback to OCR for image-only PDFs.
+ * 4. Parse article-level provisions and write seed JSON under data/seed.
  */
 
 import * as fs from 'fs';
@@ -37,6 +37,14 @@ const LAW_CATEGORIES = [16, 17];
 interface CliArgs {
   limit: number | null;
   skipFetch: boolean;
+  allowOcr: boolean;
+  ocrLang: string;
+}
+
+interface ProcessOptions {
+  skipFetch: boolean;
+  allowOcr: boolean;
+  ocrLang: string;
 }
 
 interface IngestResult {
@@ -46,12 +54,15 @@ interface IngestResult {
   reason?: string;
   provisions?: number;
   definitions?: number;
+  extraction_method?: 'pdftotext' | 'ocr';
 }
 
 function parseArgs(): CliArgs {
   const args = process.argv.slice(2);
   let limit: number | null = null;
   let skipFetch = false;
+  let allowOcr = false;
+  let ocrLang = 'ara+eng';
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--limit' && args[i + 1]) {
@@ -59,10 +70,15 @@ function parseArgs(): CliArgs {
       i++;
     } else if (args[i] === '--skip-fetch') {
       skipFetch = true;
+    } else if (args[i] === '--allow-ocr') {
+      allowOcr = true;
+    } else if (args[i] === '--ocr-lang' && args[i + 1]) {
+      ocrLang = args[i + 1].trim();
+      i++;
     }
   }
 
-  return { limit, skipFetch };
+  return { limit, skipFetch, allowOcr, ocrLang };
 }
 
 function ensureDirs(): void {
@@ -86,6 +102,11 @@ function detailUrl(lawId: number): string {
   return `${PORTAL_BASE_URL}/publiclaws/details/${lawId}`;
 }
 
+function hasCommand(commandName: string): boolean {
+  const result = spawnSync('which', [commandName], { stdio: 'ignore' });
+  return result.status === 0;
+}
+
 function extractPdfText(pdfPath: string): string {
   const result = spawnSync('pdftotext', ['-layout', pdfPath, '-'], {
     encoding: 'utf8',
@@ -97,6 +118,64 @@ function extractPdfText(pdfPath: string): string {
   }
 
   return result.stdout;
+}
+
+function pageNumberFromPngName(fileName: string): number {
+  const match = fileName.match(/-(\d+)\.png$/);
+  return match ? Number.parseInt(match[1], 10) : Number.MAX_SAFE_INTEGER;
+}
+
+function extractPdfTextViaOcr(pdfPath: string, lawId: number, downloadId: string, ocrLang: string): string {
+  if (!hasCommand('pdftoppm')) {
+    throw new Error('pdftoppm is not installed');
+  }
+  if (!hasCommand('tesseract')) {
+    throw new Error('tesseract is not installed');
+  }
+
+  const tempDir = path.join(SOURCE_DIR, `ocr-law-${lawId}-${downloadId}`);
+  fs.rmSync(tempDir, { recursive: true, force: true });
+  fs.mkdirSync(tempDir, { recursive: true });
+
+  try {
+    const outputPrefix = path.join(tempDir, 'page');
+    const render = spawnSync('pdftoppm', ['-png', pdfPath, outputPrefix], {
+      encoding: 'utf8',
+      maxBuffer: 64 * 1024 * 1024,
+    });
+
+    if (render.status !== 0) {
+      throw new Error(`pdftoppm failed (${render.status}): ${render.stderr || 'unknown error'}`);
+    }
+
+    const pages = fs
+      .readdirSync(tempDir)
+      .filter(name => /^page-\d+\.png$/.test(name))
+      .sort((a, b) => pageNumberFromPngName(a) - pageNumberFromPngName(b));
+
+    if (pages.length === 0) {
+      throw new Error('no PNG pages produced for OCR');
+    }
+
+    const chunks: string[] = [];
+    for (const page of pages) {
+      const imagePath = path.join(tempDir, page);
+      const ocr = spawnSync('tesseract', [imagePath, 'stdout', '-l', ocrLang, '--psm', '6'], {
+        encoding: 'utf8',
+        maxBuffer: 64 * 1024 * 1024,
+      });
+
+      if (ocr.status !== 0) {
+        throw new Error(`tesseract failed on ${page}: ${ocr.stderr || 'unknown error'}`);
+      }
+
+      chunks.push(ocr.stdout);
+    }
+
+    return chunks.join('\n\f\n');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
 }
 
 function hasMeaningfulText(text: string): boolean {
@@ -130,11 +209,11 @@ async function loadCategoryLawIds(skipFetch: boolean): Promise<number[]> {
   return [...ids].sort((a, b) => a - b);
 }
 
-async function processLaw(lawId: number, skipFetch: boolean): Promise<IngestResult> {
+async function processLaw(lawId: number, options: ProcessOptions): Promise<IngestResult> {
   const detailCachePath = path.join(SOURCE_DIR, `law-${lawId}.html`);
 
   let html: string;
-  if (skipFetch && fs.existsSync(detailCachePath)) {
+  if (options.skipFetch && fs.existsSync(detailCachePath)) {
     html = fs.readFileSync(detailCachePath, 'utf-8');
   } else {
     const detailResponse = await fetchTextWithRateLimit(detailUrl(lawId));
@@ -159,8 +238,9 @@ async function processLaw(lawId: number, skipFetch: boolean): Promise<IngestResu
   const downloadId = attachment.href.match(/\/(\d+)$/)?.[1] ?? 'unknown';
   const pdfPath = path.join(SOURCE_DIR, `law-${lawId}-download-${downloadId}.pdf`);
   const textPath = path.join(SOURCE_DIR, `law-${lawId}-download-${downloadId}.txt`);
+  const ocrTextPath = path.join(SOURCE_DIR, `law-${lawId}-download-${downloadId}.ocr.txt`);
 
-  if (!(skipFetch && fs.existsSync(pdfPath))) {
+  if (!(options.skipFetch && fs.existsSync(pdfPath))) {
     const pdfResponse = await fetchBinaryWithRateLimit(pdfUrl);
     if (pdfResponse.status !== 200) {
       return { lawId, status: 'error', reason: `pdf HTTP ${pdfResponse.status}` };
@@ -168,23 +248,52 @@ async function processLaw(lawId: number, skipFetch: boolean): Promise<IngestResu
     fs.writeFileSync(pdfPath, pdfResponse.body);
   }
 
-  const pdfText = extractPdfText(pdfPath);
-  fs.writeFileSync(textPath, pdfText, 'utf-8');
+  const extractedText = extractPdfText(pdfPath);
+  fs.writeFileSync(textPath, extractedText, 'utf-8');
 
-  if (!hasMeaningfulText(pdfText)) {
-    return {
-      lawId,
-      status: 'skipped',
-      reason: 'PDF text is empty/image-only (no extractable machine text)',
-    };
+  let finalText = extractedText;
+  let extractionMethod: 'pdftotext' | 'ocr' = 'pdftotext';
+
+  if (!hasMeaningfulText(extractedText)) {
+    if (!options.allowOcr) {
+      return {
+        lawId,
+        status: 'skipped',
+        reason: 'PDF text is empty/image-only (rerun with --allow-ocr to attempt OCR fallback)',
+      };
+    }
+
+    try {
+      const ocrText = extractPdfTextViaOcr(pdfPath, lawId, downloadId, options.ocrLang);
+      fs.writeFileSync(ocrTextPath, ocrText, 'utf-8');
+
+      if (!hasMeaningfulText(ocrText)) {
+        return {
+          lawId,
+          status: 'skipped',
+          reason: 'OCR fallback produced insufficient text',
+        };
+      }
+
+      finalText = ocrText;
+      extractionMethod = 'ocr';
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return {
+        lawId,
+        status: 'skipped',
+        reason: `OCR fallback failed: ${message}`,
+      };
+    }
   }
 
-  const seed = buildSeedFromPdfText(law, pdfText, pdfUrl);
+  const seed = buildSeedFromPdfText(law, finalText, pdfUrl);
   if (!seed) {
     return {
       lawId,
       status: 'skipped',
       reason: 'no parseable article sections (مادة/Article) found in extracted text',
+      extraction_method: extractionMethod,
     };
   }
 
@@ -197,6 +306,7 @@ async function processLaw(lawId: number, skipFetch: boolean): Promise<IngestResu
     status: 'ok',
     provisions: seed.provisions.length,
     definitions: seed.definitions.length,
+    extraction_method: extractionMethod,
   };
 }
 
@@ -213,6 +323,8 @@ function writeIngestionReport(results: IngestResult[], docs: ParsedAct[]): void 
       documents: docs.length,
       provisions: docs.reduce((sum, d) => sum + d.provisions.length, 0),
       definitions: docs.reduce((sum, d) => sum + d.definitions.length, 0),
+      pdftotext_docs: results.filter(r => r.status === 'ok' && r.extraction_method === 'pdftotext').length,
+      ocr_docs: results.filter(r => r.status === 'ok' && r.extraction_method === 'ocr').length,
     },
     results,
   };
@@ -225,7 +337,7 @@ function writeIngestionReport(results: IngestResult[], docs: ParsedAct[]): void 
 }
 
 async function main(): Promise<void> {
-  const { limit, skipFetch } = parseArgs();
+  const { limit, skipFetch, allowOcr, ocrLang } = parseArgs();
 
   ensureDirs();
   if (!skipFetch) {
@@ -235,9 +347,12 @@ async function main(): Promise<void> {
   console.log('Egyptian Law MCP -- Real Ingestion');
   console.log('===================================');
   console.log(`Source: ${PORTAL_BASE_URL}/publiclaws`);
-  console.log(`Rate limit: 1.5s between requests`);
+  console.log('Rate limit: 1.5s between requests');
   if (limit) console.log(`Limit: ${limit}`);
   if (skipFetch) console.log('Using cached source files when available');
+  if (allowOcr) {
+    console.log(`OCR fallback: enabled (lang=${ocrLang})`);
+  }
   console.log('');
 
   const discoveredLawIds = await loadCategoryLawIds(skipFetch);
@@ -253,14 +368,15 @@ async function main(): Promise<void> {
     process.stdout.write(`- Law detail ${lawId}: `);
 
     try {
-      const result = await processLaw(lawId, skipFetch);
+      const result = await processLaw(lawId, { skipFetch, allowOcr, ocrLang });
       results.push(result);
 
       if (result.status === 'ok' && result.docId) {
         const seedPath = path.join(SEED_DIR, `${result.docId}.json`);
         const parsed = JSON.parse(fs.readFileSync(seedPath, 'utf-8')) as ParsedAct;
         docs.push(parsed);
-        console.log(`OK (${result.provisions} provisions, ${result.definitions} definitions)`);
+        const method = result.extraction_method ?? 'pdftotext';
+        console.log(`OK (${result.provisions} provisions, ${result.definitions} definitions, ${method})`);
       } else if (result.status === 'skipped') {
         console.log(`SKIPPED (${result.reason})`);
       } else {
@@ -280,6 +396,7 @@ async function main(): Promise<void> {
   const errors = results.filter(r => r.status === 'error').length;
   const totalProvisions = docs.reduce((sum, d) => sum + d.provisions.length, 0);
   const totalDefinitions = docs.reduce((sum, d) => sum + d.definitions.length, 0);
+  const ocrDocs = results.filter(r => r.status === 'ok' && r.extraction_method === 'ocr').length;
 
   console.log('\nIngestion Summary');
   console.log('-----------------');
@@ -290,6 +407,7 @@ async function main(): Promise<void> {
   console.log(`Documents:   ${docs.length}`);
   console.log(`Provisions:  ${totalProvisions}`);
   console.log(`Definitions: ${totalDefinitions}`);
+  console.log(`OCR docs:    ${ocrDocs}`);
   console.log(`Report:      ${path.join(SOURCE_DIR, 'ingestion-report.json')}`);
 
   if (docs.length === 0) {
