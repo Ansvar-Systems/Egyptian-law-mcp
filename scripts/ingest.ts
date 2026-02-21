@@ -125,12 +125,84 @@ function pageNumberFromPngName(fileName: string): number {
   return match ? Number.parseInt(match[1], 10) : Number.MAX_SAFE_INTEGER;
 }
 
-function extractPdfTextViaOcr(pdfPath: string, lawId: number, downloadId: string, ocrLang: string): string {
+function renderPdfToPngPages(pdfPath: string, tempDir: string): string[] {
+  const outputPrefix = path.join(tempDir, 'page');
+  const render = spawnSync('pdftoppm', ['-png', pdfPath, outputPrefix], {
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+
+  if (render.status !== 0) {
+    throw new Error(`pdftoppm failed (${render.status}): ${render.stderr || 'unknown error'}`);
+  }
+
+  const pages = fs
+    .readdirSync(tempDir)
+    .filter(name => /^page-\d+\.png$/.test(name))
+    .sort((a, b) => pageNumberFromPngName(a) - pageNumberFromPngName(b));
+
+  if (pages.length === 0) {
+    throw new Error('no PNG pages produced for OCR');
+  }
+
+  return pages.map(page => path.join(tempDir, page));
+}
+
+function extractPdfTextViaSystemTesseract(pagePaths: string[], ocrLang: string): string {
+  const chunks: string[] = [];
+
+  for (const imagePath of pagePaths) {
+    const ocr = spawnSync('tesseract', [imagePath, 'stdout', '-l', ocrLang, '--psm', '6'], {
+      encoding: 'utf8',
+      maxBuffer: 64 * 1024 * 1024,
+    });
+
+    if (ocr.status !== 0) {
+      const pageName = path.basename(imagePath);
+      throw new Error(`tesseract failed on ${pageName}: ${ocr.stderr || 'unknown error'}`);
+    }
+
+    chunks.push(ocr.stdout);
+  }
+
+  return chunks.join('\n\f\n');
+}
+
+async function extractPdfTextViaTesseractJs(pagePaths: string[], ocrLang: string): Promise<string> {
+  const tesseract = await import('tesseract.js');
+  const langs = ocrLang.includes('+')
+    ? ocrLang.split('+').map(s => s.trim()).filter(Boolean)
+    : ocrLang.trim();
+
+  const cachePath = path.join(SOURCE_DIR, '.tesseract-cache');
+  fs.mkdirSync(cachePath, { recursive: true });
+
+  const worker = await tesseract.createWorker(langs as string | string[], 1, {
+    cachePath,
+    logger: () => undefined,
+  });
+
+  const chunks: string[] = [];
+  try {
+    for (const imagePath of pagePaths) {
+      const result = await worker.recognize(imagePath);
+      chunks.push(result.data.text ?? '');
+    }
+  } finally {
+    await worker.terminate();
+  }
+
+  return chunks.join('\n\f\n');
+}
+
+async function extractPdfTextViaOcr(
+  pdfPath: string,
+  lawId: number,
+  downloadId: string,
+  ocrLang: string,
+): Promise<string> {
   if (!hasCommand('pdftoppm')) {
     throw new Error('pdftoppm is not installed');
-  }
-  if (!hasCommand('tesseract')) {
-    throw new Error('tesseract is not installed');
   }
 
   const tempDir = path.join(SOURCE_DIR, `ocr-law-${lawId}-${downloadId}`);
@@ -138,41 +210,12 @@ function extractPdfTextViaOcr(pdfPath: string, lawId: number, downloadId: string
   fs.mkdirSync(tempDir, { recursive: true });
 
   try {
-    const outputPrefix = path.join(tempDir, 'page');
-    const render = spawnSync('pdftoppm', ['-png', pdfPath, outputPrefix], {
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-    });
-
-    if (render.status !== 0) {
-      throw new Error(`pdftoppm failed (${render.status}): ${render.stderr || 'unknown error'}`);
+    const pagePaths = renderPdfToPngPages(pdfPath, tempDir);
+    if (hasCommand('tesseract')) {
+      return extractPdfTextViaSystemTesseract(pagePaths, ocrLang);
     }
 
-    const pages = fs
-      .readdirSync(tempDir)
-      .filter(name => /^page-\d+\.png$/.test(name))
-      .sort((a, b) => pageNumberFromPngName(a) - pageNumberFromPngName(b));
-
-    if (pages.length === 0) {
-      throw new Error('no PNG pages produced for OCR');
-    }
-
-    const chunks: string[] = [];
-    for (const page of pages) {
-      const imagePath = path.join(tempDir, page);
-      const ocr = spawnSync('tesseract', [imagePath, 'stdout', '-l', ocrLang, '--psm', '6'], {
-        encoding: 'utf8',
-        maxBuffer: 64 * 1024 * 1024,
-      });
-
-      if (ocr.status !== 0) {
-        throw new Error(`tesseract failed on ${page}: ${ocr.stderr || 'unknown error'}`);
-      }
-
-      chunks.push(ocr.stdout);
-    }
-
-    return chunks.join('\n\f\n');
+    return await extractPdfTextViaTesseractJs(pagePaths, ocrLang);
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
@@ -264,7 +307,7 @@ async function processLaw(lawId: number, options: ProcessOptions): Promise<Inges
     }
 
     try {
-      const ocrText = extractPdfTextViaOcr(pdfPath, lawId, downloadId, options.ocrLang);
+      const ocrText = await extractPdfTextViaOcr(pdfPath, lawId, downloadId, options.ocrLang);
       fs.writeFileSync(ocrTextPath, ocrText, 'utf-8');
 
       if (!hasMeaningfulText(ocrText)) {
@@ -287,7 +330,9 @@ async function processLaw(lawId: number, options: ProcessOptions): Promise<Inges
     }
   }
 
-  const seed = buildSeedFromPdfText(law, finalText, pdfUrl);
+  const seed = buildSeedFromPdfText(law, finalText, pdfUrl, {
+    allowOrdinalFallback: extractionMethod === 'ocr',
+  });
   if (!seed) {
     return {
       lawId,

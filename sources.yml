@@ -6,7 +6,7 @@ sources:
   - name: "Public Laws Portal"
     authority: "Ministry of Investment and Foreign Trade (Egypt)"
     official_portal: "https://portal.investment.gov.eg/publiclaws"
-    retrieval_method: "HTML_INDEX + PDF_DOWNLOAD + PDF_TEXT_EXTRACTION"
+    retrieval_method: "HTML_INDEX + PDF_DOWNLOAD + PDF_TEXT_EXTRACTION + OPTIONAL_OCR"
     update_frequency: "weekly"
     last_ingested: "2026-02-21"
     license_or_terms:
@@ -15,7 +15,7 @@ sources:
       summary: "Legislation metadata and downloadable law PDFs published on official government domain."
     coverage:
       scope: "Investment and foreign-trade legislation available in portal categories 16 and 17"
-      limitations: "Some law PDFs are image-only with no extractable machine text and are skipped."
+      limitations: "Some PDFs are image-based and require OCR fallback; OCR-derived text may include recognition noise."
     languages:
       - "ar"
       - "en"

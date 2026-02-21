@@ -185,16 +185,103 @@ export function selectPrimaryAttachment(attachments: LawAttachment[]): LawAttach
   return preferred ?? attachments[0];
 }
 
-function parseArticleSection(line: string): string | null {
-  const normalized = normalizeArabicDigits(line.replace(BIDI_CONTROLS_REGEX, '').replace(/\s+/g, ' ').trim());
-  if (!normalized || normalized === 'مادة') return null;
+const ORDINAL_WORD_TO_NUMBER: Record<string, string> = {
+  الاول: '1',
+  الاولي: '1',
+  الاولى: '1',
+  الثاني: '2',
+  الثانيه: '2',
+  الثانية: '2',
+  الثائيه: '2',
+  الثائية: '2',
+  الثالث: '3',
+  الثالثه: '3',
+  الثالثة: '3',
+  الرابع: '4',
+  الرابعه: '4',
+  الرابعة: '4',
+  الخامس: '5',
+  الخامسه: '5',
+  الخامسة: '5',
+  السادس: '6',
+  السادسه: '6',
+  السادسة: '6',
+  السابع: '7',
+  السابعه: '7',
+  السابعة: '7',
+  الثامن: '8',
+  الثامنه: '8',
+  الثامنة: '8',
+  التاسع: '9',
+  التاسعه: '9',
+  التاسعة: '9',
+  العاشر: '10',
+  العاشره: '10',
+  العاشرة: '10',
+};
 
-  const arabicMatch = normalized.match(/^مادة\s*([0-9]+(?:\s*مكرر(?:\s*[أ-ي])?)?)/);
-  if (arabicMatch) {
-    return arabicMatch[1].replace(/\s+/g, ' ').trim();
+function normalizeArabicToken(value: string): string {
+  return value
+    .replace(/[\u064B-\u0652]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .replace(/\s+/g, '')
+    .replace(/[^\p{Script=Arabic}0-9A-Za-z]/gu, '');
+}
+
+function parseSectionFromOrdinalWords(text: string): string | null {
+  const normalized = normalizeArabicToken(text);
+  for (const [word, number] of Object.entries(ORDINAL_WORD_TO_NUMBER)) {
+    if (normalized.includes(word)) {
+      return number;
+    }
+  }
+  return null;
+}
+
+function parseArticleSection(line: string, allowOrdinalFallback = false): string | null {
+  const normalized = normalizeArabicDigits(
+    line
+      .replace(BIDI_CONTROLS_REGEX, '')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  );
+  if (!normalized) return null;
+
+  // OCR may output "الحادة" instead of "المادة".
+  const corrected = allowOrdinalFallback
+    ? normalized.replace(/\bالحادة\b/g, 'المادة')
+    : normalized;
+
+  const numericHeadingMatch = allowOrdinalFallback
+    ? corrected.match(
+      /^[\W_]*\(?\s*(?:ال)?(?:مادة|ماده)\s*([0-9]+(?:\s*مكرر(?:\s*[أ-ي])?)?)\s*\)?[\W_]*$/u,
+    )
+    : corrected.match(/^مادة\s*([0-9]+(?:\s*مكرر(?:\s*[أ-ي])?)?)/u);
+  if (numericHeadingMatch && (!allowOrdinalFallback || corrected.length <= 50)) {
+    return numericHeadingMatch[1].replace(/\s+/g, ' ').trim();
   }
 
-  const englishMatch = normalized.match(/^Article\s*(\d+[A-Za-z]*)/i);
+  if (allowOrdinalFallback) {
+    const ordinalHeadingMatch = corrected.match(
+      /^[\W_]*\(?\s*(?:ال)?(?:مادة|ماده)\s*([^\d][\p{Script=Arabic}\s]{2,30})\s*\)?[\W_]*$/u,
+    );
+    if (ordinalHeadingMatch) {
+      const parsedOrdinal = parseSectionFromOrdinalWords(ordinalHeadingMatch[1]);
+      if (parsedOrdinal) return parsedOrdinal;
+    }
+
+    // OCR may miss the word "مادة" but still preserve a short ordinal-only heading.
+    if (corrected.length <= 40) {
+      const parsedOrdinal = parseSectionFromOrdinalWords(corrected);
+      if (parsedOrdinal) {
+        return parsedOrdinal;
+      }
+    }
+  }
+
+  const englishMatch = corrected.match(/^Article\s*(\d+[A-Za-z]*)/i);
   if (englishMatch) {
     return englishMatch[1].trim();
   }
@@ -252,13 +339,15 @@ export function buildSeedFromPdfText(
   law: PortalLawDetail,
   pdfTextRaw: string,
   sourcePdfUrl: string,
+  options?: { allowOrdinalFallback?: boolean },
 ): ParsedAct | null {
   const normalizedText = normalizePdfText(pdfTextRaw);
   const lines = normalizedText.split('\n');
+  const allowOrdinalFallback = options?.allowOrdinalFallback ?? false;
 
   const sections: { section: string; startLine: number }[] = [];
   for (let i = 0; i < lines.length; i++) {
-    const section = parseArticleSection(lines[i]);
+    const section = parseArticleSection(lines[i], allowOrdinalFallback);
     if (section) {
       sections.push({ section, startLine: i });
     }
@@ -303,8 +392,16 @@ export function buildSeedFromPdfText(
     return null;
   }
 
-  const titleAr = parseArabicTitleFromPdf(pdfTextRaw)
-    ?? `قانون رقم ${law.lawNumber} لسنة ${law.lawYear}`;
+  const parsedTitleAr = parseArabicTitleFromPdf(pdfTextRaw);
+  const canonicalTitleAr = `قانون رقم ${law.lawNumber} لسنة ${law.lawYear}`;
+  const normalizedLawNumber = normalizeArabicDigits(law.lawNumber);
+  const normalizedLawYear = normalizeArabicDigits(law.lawYear);
+
+  const titleAr = parsedTitleAr
+    && normalizeArabicDigits(parsedTitleAr).includes(normalizedLawNumber)
+    && normalizeArabicDigits(parsedTitleAr).includes(normalizedLawYear)
+    ? parsedTitleAr
+    : canonicalTitleAr;
 
   const id = `eg-law-${law.lawNumber}-${law.lawYear}`;
 

@@ -62,6 +62,36 @@
     },
     {
       "id": "eg-real-005",
+      "category": "article_retrieval",
+      "description": "Retrieve OCR-ingested Law 155/2002 Article 1",
+      "tool": "get_provision",
+      "input": {
+        "document_id": "eg-law-155-2002",
+        "section": "1"
+      },
+      "assertions": {
+        "result_not_empty": true,
+        "fields_present": ["content", "provision_ref"],
+        "text_not_empty": true
+      }
+    },
+    {
+      "id": "eg-real-006",
+      "category": "article_retrieval",
+      "description": "Retrieve OCR-ingested Law 173/2023 Article 1",
+      "tool": "get_provision",
+      "input": {
+        "document_id": "eg-law-173-2023",
+        "section": "1"
+      },
+      "assertions": {
+        "result_not_empty": true,
+        "fields_present": ["content", "provision_ref"],
+        "text_not_empty": true
+      }
+    },
+    {
+      "id": "eg-real-007",
       "category": "metadata",
       "description": "list_sources returns Egyptian source metadata",
       "tool": "list_sources",
@@ -72,7 +102,7 @@
       }
     },
     {
-      "id": "eg-real-006",
+      "id": "eg-real-008",
       "category": "negative_test",
       "description": "Non-existent law returns graceful handling",
       "tool": "get_provision",

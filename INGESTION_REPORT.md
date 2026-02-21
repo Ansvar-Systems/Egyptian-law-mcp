@@ -10,33 +10,38 @@
 
 ## Ingestion Results
 - Laws discovered: 8
-- Laws ingested: 6
-- Laws skipped: 2
+- Laws ingested: 8
+- Laws skipped: 0
 - Errors: 0
-- Documents in seed set: 6
-- Provisions extracted: 685
+- Documents in seed set: 8
+- Provisions extracted: 697
 - Definitions extracted: 6
+- OCR-ingested documents: 2 (`eg-law-155-2002`, `eg-law-173-2023`)
 
-## Skipped Laws (No Fabrication)
-- `lawId=28` (`Law 155/2002`): PDF text is image-only (no machine-extractable text)
-- `lawId=31` (`Law 173/2023`): PDF text is image-only (no machine-extractable text)
+## Notes on OCR Coverage
+- Two official portal PDFs are image-based and required OCR fallback.
+- OCR fallback is enabled by `--allow-ocr` in `scripts/ingest.ts`.
+- OCR output is source-derived but may include recognition noise; no text was fabricated.
 
 ## Ingested Seed Documents
+- `eg-law-45-1982`
+- `eg-law-72-2017`
 - `eg-law-118-1975`
 - `eg-law-120-1982`
 - `eg-law-121-1982`
+- `eg-law-155-2002` (OCR)
 - `eg-law-159-1981`
-- `eg-law-45-1982`
-- `eg-law-72-2017`
+- `eg-law-173-2023` (OCR)
 
 ## Character-Match Verification (3 Provisions)
-Provisions were re-parsed from the official extracted PDF text and compared with stored seed content.
+Provisions were re-parsed from official extracted PDF text and compared with stored seed content.
 
 - `eg-law-121-1982` `art1`: exact match (`1234` chars)
 - `eg-law-118-1975` `art1`: exact match (`1346` chars)
 - `eg-law-159-1981` `art10`: exact match (`832` chars)
 
 ## Build/Test Status
+- `npm run build:db`: passed
 - `npm run build`: passed
-- `npm test`: passed (14/14)
+- `npm test`: passed (`16/16`)
 - `npx tsc --noEmit`: passed

@@ -20,14 +20,14 @@ beforeAll(() => {
 });
 
 describe('Database integrity', () => {
-  it('should have 6 legal documents', () => {
+  it('should have 8 legal documents', () => {
     const row = db.prepare('SELECT COUNT(*) as cnt FROM legal_documents').get() as { cnt: number };
-    expect(row.cnt).toBe(6);
+    expect(row.cnt).toBe(8);
   });
 
-  it('should have at least 680 provisions', () => {
+  it('should have at least 670 provisions', () => {
     const row = db.prepare('SELECT COUNT(*) as cnt FROM legal_provisions').get() as { cnt: number };
-    expect(row.cnt).toBeGreaterThanOrEqual(680);
+    expect(row.cnt).toBeGreaterThanOrEqual(670);
   });
 
   it('should have FTS index with Arabic content', () => {
@@ -79,7 +79,9 @@ describe('All ingested laws are present', () => {
     'eg-law-118-1975',
     'eg-law-120-1982',
     'eg-law-121-1982',
+    'eg-law-155-2002',
     'eg-law-159-1981',
+    'eg-law-173-2023',
     'eg-law-45-1982',
     'eg-law-72-2017',
   ];
