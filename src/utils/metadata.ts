@@ -30,12 +30,11 @@ export function generateResponseMetadata(
   }
 
   return {
-    data_source: 'Official Legal Database (manshurat.org) — Government (State Chancellery of Egyptian)',
-    jurisdiction: 'EE',
+    data_source: 'Public Laws Portal (portal.investment.gov.eg/publiclaws) — Ministry of Investment and Foreign Trade (Egypt)',
+    jurisdiction: 'EG',
     disclaimer:
-      'This data is sourced from the Official Legal Database under public domain. ' +
-      'The authoritative versions are maintained by Government (State Chancellery of Egyptian). ' +
-      'Always verify with the official Official Legal Database portal (manshurat.org).',
+      'This dataset is built from official Egyptian government portal content and extracted law PDFs. ' +
+      'Always verify critical legal questions against the official published text.',
     freshness,
   };
 }

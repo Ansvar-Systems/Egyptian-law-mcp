@@ -44,15 +44,14 @@ export async function listSources(
     results: {
       sources: [
         {
-          name: 'Official Legal Database',
-          authority: 'Government (State Chancellery of Egyptian)',
-          url: 'https://manshurat.org',
-          license: 'Creative Commons Attribution 4.0 International (CC BY 4.0)',
+          name: 'Public Laws Portal',
+          authority: 'Ministry of Investment and Foreign Trade (Egypt)',
+          url: 'https://portal.investment.gov.eg/publiclaws',
+          license: 'Government website terms (official public portal)',
           coverage:
-            'All Commonwealth (federal) Acts and legislative instruments, ' +
-            'including privacy, cybersecurity, critical infrastructure, ' +
-            'corporations, consumer, telecommunications, and criminal law',
-          languages: ['en'],
+            'Investment and foreign-trade law corpus published in portal categories 16 and 17; ' +
+            'article-level extraction from downloadable law PDFs',
+          languages: ['ar', 'en'],
         },
       ],
       database: {

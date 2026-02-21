@@ -1,6 +1,6 @@
 /**
  * Golden contract tests for Egyptian Law MCP.
- * Validates core tool functionality against seed data.
+ * Validates core tool functionality against real ingested seed data.
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
@@ -20,40 +20,39 @@ beforeAll(() => {
 });
 
 describe('Database integrity', () => {
-  it('should have 10 legal documents (excluding EU cross-refs)', () => {
-    const row = db.prepare(
-      "SELECT COUNT(*) as cnt FROM legal_documents WHERE id != 'eu-cross-references'"
-    ).get() as { cnt: number };
-    expect(row.cnt).toBe(10);
+  it('should have 6 legal documents', () => {
+    const row = db.prepare('SELECT COUNT(*) as cnt FROM legal_documents').get() as { cnt: number };
+    expect(row.cnt).toBe(6);
   });
 
-  it('should have at least 76 provisions', () => {
+  it('should have at least 680 provisions', () => {
     const row = db.prepare('SELECT COUNT(*) as cnt FROM legal_provisions').get() as { cnt: number };
-    expect(row.cnt).toBeGreaterThanOrEqual(76);
+    expect(row.cnt).toBeGreaterThanOrEqual(680);
   });
 
-  it('should have FTS index', () => {
+  it('should have FTS index with Arabic content', () => {
     const row = db.prepare(
-      "SELECT COUNT(*) as cnt FROM provisions_fts WHERE provisions_fts MATCH 'data'"
+      "SELECT COUNT(*) as cnt FROM provisions_fts WHERE provisions_fts MATCH 'االستثمار'"
     ).get() as { cnt: number };
-    expect(row.cnt).toBeGreaterThanOrEqual(0);
+    expect(row.cnt).toBeGreaterThan(0);
   });
 });
 
 describe('Article retrieval', () => {
   it('should retrieve a provision by document_id and section', () => {
     const row = db.prepare(
-      "SELECT content FROM legal_provisions WHERE document_id = 'eg-anti-cybercrime' AND section = '1'"
+      "SELECT content FROM legal_provisions WHERE document_id = 'eg-law-121-1982' AND section = '1' LIMIT 1"
     ).get() as { content: string } | undefined;
     expect(row).toBeDefined();
-    expect(row!.content.length).toBeGreaterThan(50);
+    expect(row!.content.length).toBeGreaterThan(100);
+    expect(row!.content).toContain('المستوردين');
   });
 });
 
 describe('Search', () => {
   it('should find results via FTS search', () => {
     const rows = db.prepare(
-      "SELECT COUNT(*) as cnt FROM provisions_fts WHERE provisions_fts MATCH 'data'"
+      "SELECT COUNT(*) as cnt FROM provisions_fts WHERE provisions_fts MATCH 'استيراد'"
     ).get() as { cnt: number };
     expect(rows.cnt).toBeGreaterThan(0);
   });
@@ -69,30 +68,27 @@ describe('Negative tests', () => {
 
   it('should return no results for invalid section', () => {
     const row = db.prepare(
-      "SELECT COUNT(*) as cnt FROM legal_provisions WHERE document_id = 'eg-anti-cybercrime' AND section = '999ZZZ-INVALID'"
+      "SELECT COUNT(*) as cnt FROM legal_provisions WHERE document_id = 'eg-law-121-1982' AND section = '999ZZZ-INVALID'"
     ).get() as { cnt: number };
     expect(row.cnt).toBe(0);
   });
 });
 
-describe('All 10 laws are present', () => {
+describe('All ingested laws are present', () => {
   const expectedDocs = [
-    'eg-anti-cybercrime',
-    'eg-cbe-cybersecurity',
-    'eg-consumer-protection',
-    'eg-electronic-signature',
-    'eg-itida',
-    'eg-ntra-regulations',
-    'eg-pdp-law',
-    'eg-penal-code-cybercrime',
-    'eg-telecommunications',
-    'eg-trade-secrets',  ];
+    'eg-law-118-1975',
+    'eg-law-120-1982',
+    'eg-law-121-1982',
+    'eg-law-159-1981',
+    'eg-law-45-1982',
+    'eg-law-72-2017',
+  ];
 
   for (const docId of expectedDocs) {
     it(`should contain document: ${docId}`, () => {
-      const row = db.prepare(
-        'SELECT id FROM legal_documents WHERE id = ?'
-      ).get(docId) as { id: string } | undefined;
+      const row = db.prepare('SELECT id FROM legal_documents WHERE id = ?').get(docId) as
+        | { id: string }
+        | undefined;
       expect(row).toBeDefined();
       expect(row!.id).toBe(docId);
     });

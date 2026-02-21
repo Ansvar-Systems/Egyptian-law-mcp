@@ -4,7 +4,7 @@
 
 import type Database from '@ansvar/mcp-sqlite';
 import { detectCapabilities, readDbMetadata } from '../capabilities.js';
-import { SERVER_NAME, SERVER_VERSION, REPOSITORY_URL } from '../constants.js';
+import { SERVER_NAME, REPOSITORY_URL } from '../constants.js';
 
 export interface AboutContext {
   version: string;
@@ -44,12 +44,12 @@ export function getAbout(db: InstanceType<typeof Database>, context: AboutContex
       eu_references: safeCount(db, 'SELECT COUNT(*) as count FROM eu_references'),
     },
     data_source: {
-      name: 'Official Legal Database',
-      authority: 'Government (State Chancellery of Egyptian)',
-      url: 'https://manshurat.org',
-      license: 'Creative Commons Attribution 4.0 International (CC BY 4.0)',
-      jurisdiction: 'EE',
-      languages: ['en'],
+      name: 'Public Laws Portal',
+      authority: 'Ministry of Investment and Foreign Trade (Egypt)',
+      url: 'https://portal.investment.gov.eg/publiclaws',
+      license: 'Government website terms (official public portal)',
+      jurisdiction: 'EG',
+      languages: ['ar', 'en'],
     },
   };
 }

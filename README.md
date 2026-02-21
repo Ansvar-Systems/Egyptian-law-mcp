@@ -23,7 +23,7 @@ npx @ansvar/egyptian-law-mcp
 
 ## Data Sources
 
-AI-generated seed data covering 10 key cybersecurity and data protection laws. Full official ingestion pending.
+Real legislation ingested from Egypt's official Public Laws Portal (https://portal.investment.gov.eg/publiclaws), with article-level extraction from published law PDFs.
 
 ## License
 
