@@ -1,0 +1,73 @@
+{
+  "id": "eg-electronic-signature",
+  "type": "statute",
+  "title": "قانون رقم 15 لسنة 2004 بشأن تنظيم التوقيع الإلكتروني وإنشاء هيئة تنمية صناعة تكنولوجيا المعلومات",
+  "title_en": "Electronic Signature Law No. 15 of 2004 and Establishment of ITIDA",
+  "short_name": "EGESL",
+  "status": "in_force",
+  "issued_date": "2004-04-23",
+  "in_force_date": "2004-04-23",
+  "url": "https://www.itida.gov.eg/en/InvestinEgypt/Pages/InvestinEgyptLegalFramework.aspx",
+  "description": "Egypt's Electronic Signature Law No. 15 of 2004 establishes the legal framework for electronic signatures and electronic documents, ensures the legal validity of electronic transactions, and creates the Information Technology Industry Development Agency (ITIDA) as the oversight body. The Law provides for accreditation of certification service providers and governs the legal equivalence of electronic signatures with handwritten signatures.",
+  "provisions": [
+    {
+      "provision_ref": "art1",
+      "section": "1",
+      "title": "Article 1. Definitions",
+      "content": "For the purposes of this Law: 'Electronic Signature' means a set of letters, numbers, symbols, or other electronic data that assumes a unique character for the person signing and is separated from any other character, and that is employed to affirm the identity of the signatory and their approval of the contents of the document signed; 'Electronic Document' means any document that is prepared, stored, retrieved, copied, or transmitted by electronic means; 'Secure Electronic Signature' means an electronic signature that is uniquely linked to its signatory, capable of identifying them, created using secure means under the exclusive control of the signatory, and linked to the signed document in a way that detects any subsequent modification; 'Certification Authority' means an entity accredited by ITIDA to issue electronic signature certificates; 'Electronic Signature Certificate' means an electronic record issued by a certification authority confirming the identity of the certificate holder; 'ITIDA' means the Information Technology Industry Development Agency, established by this Law."
+    },
+    {
+      "provision_ref": "art2",
+      "section": "2",
+      "title": "Article 2. Legal Effect of Electronic Documents and Signatures",
+      "content": "Electronic documents and electronic signatures shall be legally valid and shall not be denied legal effect or admissibility as evidence solely because they are in electronic form. Where the Law requires a document in writing, this requirement is satisfied by an electronic document where: (1) it is accessible and can be used for subsequent reference; (2) it is retained in its original format; (3) the document can be attributed to the appropriate person. A secure electronic signature shall have the same legal effect as a handwritten signature and an official seal. Electronic signatures shall be admissible as evidence in civil and criminal proceedings. The court shall assess the weight of electronic evidence based on the reliability of the methods used to create, store and transmit electronic documents. Electronic contracts concluded using secure electronic signatures shall have the same legal force as written contracts bearing handwritten signatures."
+    },
+    {
+      "provision_ref": "art3",
+      "section": "3",
+      "title": "Article 3. Types of Electronic Signatures",
+      "content": "This Law recognises the following types of electronic signatures: (1) Simple electronic signature — any data in electronic form attached to or logically associated with other electronic data and used to sign; (2) Secure electronic signature — an electronic signature based on a digital certificate issued by an accredited certification authority and created by a secure signature creation device. A secure electronic signature shall: (1) be uniquely linked to the signatory; (2) be capable of identifying the signatory; (3) be created using means under the signatory's sole control; (4) detect any subsequent modification of the signed data. A secure electronic signature based on a qualified certificate issued by an ITIDA-accredited certification authority shall enjoy a presumption of authenticity. The Council of Ministers shall determine the categories of documents for which a secure electronic signature is mandatory."
+    },
+    {
+      "provision_ref": "art4",
+      "section": "4",
+      "title": "Article 4. Information Technology Industry Development Agency (ITIDA)",
+      "content": "The Information Technology Industry Development Agency (ITIDA) is established as an independent body with legal personality, affiliated with the Ministry of Communications and Information Technology. ITIDA shall: (1) accredit certification authorities issuing electronic signature certificates; (2) supervise accredited certification authorities for compliance with this Law and applicable regulations; (3) maintain and publish a trusted list of accredited certification authorities; (4) establish technical standards for electronic signatures, certificates and certification authorities; (5) promote the development of the information technology industry in Egypt; (6) coordinate with the private sector on IT development initiatives; (7) cooperate with foreign certification bodies for mutual recognition of electronic signatures. ITIDA shall be governed by a Board of Directors appointed by the Cabinet. ITIDA shall issue an annual report on electronic signature activity in Egypt."
+    },
+    {
+      "provision_ref": "art5",
+      "section": "5",
+      "title": "Article 5. Accreditation of Certification Authorities",
+      "content": "Entities wishing to issue electronic signature certificates shall obtain accreditation from ITIDA. The accreditation application shall include: (1) documentation of technical and financial capability; (2) a description of the certificate issuance and management systems; (3) evidence of compliance with applicable security standards; (4) a certificate revocation and publication procedure; (5) a business continuity plan. Accredited certification authorities shall: (1) verify the identity of certificate applicants before issuance; (2) maintain a publicly accessible certificate revocation list; (3) notify ITIDA immediately of security incidents affecting certificate integrity; (4) comply with the technical standards issued by ITIDA; (5) conduct annual security audits. ITIDA may suspend or revoke accreditation where a certification authority fails to meet its obligations. Certificates issued by foreign certification authorities recognised by ITIDA shall have the same legal effect as certificates issued by Egyptian accredited authorities."
+    },
+    {
+      "provision_ref": "art6",
+      "section": "6",
+      "title": "Article 6. Liability and Penalties",
+      "content": "An accredited certification authority shall be liable for damages suffered by persons who reasonably relied on certificates it issued, where the certification authority has: (1) issued a certificate without adequate verification of the applicant's identity; (2) failed to record the revocation of a certificate; (3) failed to implement the required security measures. A person who creates or uses a false electronic signature or certificate with fraudulent intent shall be subject to imprisonment for not less than one year and a fine not less than EGP 20,000 and not exceeding EGP 100,000. Operating as a certification authority without ITIDA accreditation shall result in imprisonment for not less than six months and a fine not less than EGP 50,000 and not exceeding EGP 200,000. Tampering with electronic signature creation data shall be subject to the penalties prescribed by the Criminal Code for forgery."
+    },
+    {
+      "provision_ref": "art7",
+      "section": "7",
+      "title": "Article 7. Government Electronic Services",
+      "content": "Government bodies shall accept electronic documents and secure electronic signatures on equal terms with paper documents and handwritten signatures for all administrative and legal purposes. The Cabinet shall designate, through regulations, the specific government services and administrative procedures that shall be conducted electronically. Government bodies shall implement secure electronic signature capabilities for issuing official electronic documents, including licences, certificates and administrative decisions. The Ministry of Communications and Information Technology shall coordinate the rollout of electronic government services in cooperation with ITIDA. Government bodies shall ensure that electronic government services are accessible to all segments of society, including persons with disabilities, through appropriate technical means."
+    }
+  ],
+  "definitions": [
+    {
+      "term": "التوقيع الإلكتروني (Electronic Signature)",
+      "definition": "A set of letters, numbers, symbols, or other electronic data that assumes a unique character for the person signing and is separated from any other character, and that is employed to affirm the identity of the signatory and their approval of the contents of the document signed.",
+      "source_provision": "art1"
+    },
+    {
+      "term": "التوقيع الإلكتروني الآمن (Secure Electronic Signature)",
+      "definition": "An electronic signature that is uniquely linked to its signatory, capable of identifying them, created using secure means under the exclusive control of the signatory, and linked to the signed document in a way that detects any subsequent modification.",
+      "source_provision": "art1"
+    },
+    {
+      "term": "هيئة تنمية صناعة تكنولوجيا المعلومات (ITIDA)",
+      "definition": "The Information Technology Industry Development Agency, established by Law No. 15 of 2004 to accredit certification authorities and promote the IT industry in Egypt.",
+      "source_provision": "art1"
+    }
+  ]
+}

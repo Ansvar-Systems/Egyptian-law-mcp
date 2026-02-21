@@ -1,0 +1,73 @@
+{
+  "id": "eg-telecommunications",
+  "type": "statute",
+  "title": "قانون رقم 10 لسنة 2003 بإصدار قانون تنظيم الاتصالات",
+  "title_en": "Telecommunications Regulation Act No. 10 of 2003",
+  "short_name": "EGTRA",
+  "status": "in_force",
+  "issued_date": "2003-04-01",
+  "in_force_date": "2003-04-01",
+  "url": "https://www.ntra.gov.eg/en/laws",
+  "description": "Egypt's Telecommunications Regulation Act No. 10 of 2003 establishes the regulatory framework for the telecommunications sector, governing the licensing of telecommunications services, frequency spectrum management, consumer protection, interconnection, and the powers of the National Telecom Regulatory Authority (NTRA) as the national regulatory body. The Law has been amended to address internet services, cybersecurity, and content regulation.",
+  "provisions": [
+    {
+      "provision_ref": "art1",
+      "section": "1",
+      "title": "Article 1. Definitions and Objectives",
+      "content": "For the purposes of this Law: 'Telecommunications' means any transmission, emission or reception of signs, signals, writing, images, sounds or intelligence of any nature by wire, radio, optical or other electromagnetic systems; 'National Telecom Regulatory Authority' (NTRA) means the independent regulatory body established by this Law to regulate the telecommunications sector; 'Licensee' means any natural or legal person who has been granted a licence by the NTRA to provide telecommunications services; 'Service' means any telecommunications service provided to subscribers or users, including fixed-line telephony, mobile telephony, internet access, and value-added services. The objectives of this Law are: (1) develop an efficient, reliable and competitive telecommunications sector; (2) ensure the availability of affordable telecommunications services; (3) protect the rights of consumers; (4) promote investment in telecommunications infrastructure; (5) ensure the efficient use of the radio frequency spectrum."
+    },
+    {
+      "provision_ref": "art2",
+      "section": "2",
+      "title": "Article 2. National Telecom Regulatory Authority (NTRA)",
+      "content": "The National Telecom Regulatory Authority (NTRA) is established as an independent regulatory body with legal personality and financial and administrative independence, affiliated with the Ministry of Communications and Information Technology. The NTRA shall: (1) grant, modify, suspend and revoke telecommunications licences; (2) manage the national radio frequency spectrum and numbering resources; (3) regulate tariffs and quality of service standards; (4) resolve disputes between licensees and between licensees and subscribers; (5) promote competition in the telecommunications market; (6) protect consumer rights; (7) implement provisions of the Anti-Cyber Crime Law concerning website blocking; (8) cooperate with international regulatory bodies including the International Telecommunication Union (ITU) and the Arab Spectrum Management Group. The NTRA shall be governed by a Board of Directors appointed by the Cabinet. The NTRA shall publish annual reports on the telecommunications market."
+    },
+    {
+      "provision_ref": "art3",
+      "section": "3",
+      "title": "Article 3. Licensing",
+      "content": "No person shall provide telecommunications services in Egypt without a licence granted by the NTRA. Licences shall be classified into: (1) comprehensive network and service licence — for operators of public telecommunications networks and services; (2) class licence — for providers of internet services, value-added services, and resellers; (3) radio spectrum licence — for use of specific radio frequencies. Licence applications shall be assessed on the basis of the technical and financial capability of the applicant, proposed network coverage plans, and satisfaction of licensing conditions. Licences shall be for a period not exceeding 25 years. Licence fees shall be approved by the Cabinet. The NTRA shall maintain a public register of all licences granted. Transfer of a licence to another operator requires the prior approval of the NTRA."
+    },
+    {
+      "provision_ref": "art4",
+      "section": "4",
+      "title": "Article 4. Consumer Rights and Subscriber Protections",
+      "content": "Licensees providing services to subscribers shall: (1) publish and comply with approved tariffs and quality of service standards; (2) provide subscribers with a written or electronic contract specifying all terms before commencement of service; (3) implement number portability enabling subscribers to retain their numbers when changing operator, within three working days; (4) provide itemised billing upon subscriber request; (5) provide free access to emergency services (112, 122, 123); (6) implement accessible services for persons with disabilities; (7) resolve subscriber complaints within 15 days of receipt. The NTRA shall establish and maintain a consumer complaints mechanism. Subscriber data collected by licensees shall be processed in accordance with the Personal Data Protection Law. Licensees shall not impose additional charges beyond approved tariffs without prior notification to subscribers."
+    },
+    {
+      "provision_ref": "art5",
+      "section": "5",
+      "title": "Article 5. Interconnection and Infrastructure Sharing",
+      "content": "Operators with significant market power (SMP) shall: (1) provide interconnection to their networks on transparent, cost-oriented, reasonable and non-discriminatory terms; (2) publish a reference interconnection offer (RIO) approved by the NTRA; (3) not discriminate between operators in terms of interconnection conditions. All operators shall have the right to request interconnection. The NTRA may impose interconnection obligations and resolve interconnection disputes within 30 days of referral. Operators shall share passive infrastructure (masts, towers, ducts, sites) where technically feasible and economically reasonable. The NTRA may impose infrastructure sharing obligations on SMP operators and set sharing terms. The use of Egyptian telecommunications infrastructure by foreign parties requires the approval of the Cabinet."
+    },
+    {
+      "provision_ref": "art6",
+      "section": "6",
+      "title": "Article 6. Network Security and Lawful Interception",
+      "content": "Licensees shall: (1) implement appropriate technical and organisational measures to ensure the security and integrity of their networks; (2) implement lawful interception capabilities in accordance with the technical specifications and orders of the competent judicial authorities and the National Security Agency; (3) report significant security incidents to the NTRA and relevant security authorities within 24 hours; (4) retain technical logs and subscriber data for a period of at least 180 days; (5) not use equipment posing a national security risk as determined by the Cabinet; (6) cooperate with the NTRA in investigations of cybersecurity incidents on their networks. The NTRA, in cooperation with the Ministry of Communications and Information Technology, shall issue technical standards for network security. In cases of emergency, the Cabinet may direct a licensee to suspend or restrict its services for national security reasons."
+    },
+    {
+      "provision_ref": "art7",
+      "section": "7",
+      "title": "Article 7. Sanctions",
+      "content": "Violations of this Law shall result in the following sanctions: (1) warning — for minor or first-time violations with a correction period; (2) financial penalties: for unlicensed provision of services — fine not less than EGP 1,000,000 and not exceeding EGP 5,000,000; for violations of interconnection obligations — fine not less than EGP 500,000; for violations of consumer protection requirements — fine not less than EGP 100,000; for repeated violations — fine doubled; (3) suspension of licence for up to six months for repeated or serious violations; (4) revocation of licence for persistent or particularly grave violations. Criminal liability applies to persons providing telecommunications services without a licence — imprisonment not exceeding one year or fine not less than EGP 200,000. NTRA decisions imposing sanctions may be appealed before the State Council (Administrative Court)."
+    }
+  ],
+  "definitions": [
+    {
+      "term": "الاتصالات (Telecommunications)",
+      "definition": "Any transmission, emission or reception of signs, signals, writing, images, sounds or intelligence of any nature by wire, radio, optical or other electromagnetic systems.",
+      "source_provision": "art1"
+    },
+    {
+      "term": "الجهاز القومي لتنظيم الاتصالات (NTRA)",
+      "definition": "The National Telecom Regulatory Authority, the independent regulatory body for telecommunications in Egypt.",
+      "source_provision": "art1"
+    },
+    {
+      "term": "المرخص له (Licensee)",
+      "definition": "Any natural or legal person who has been granted a licence by the NTRA to provide telecommunications services.",
+      "source_provision": "art1"
+    }
+  ]
+}

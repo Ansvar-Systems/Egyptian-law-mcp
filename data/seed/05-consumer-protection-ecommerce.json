@@ -1,0 +1,79 @@
+{
+  "id": "eg-consumer-protection",
+  "type": "statute",
+  "title": "قانون رقم 181 لسنة 2018 بشأن حماية المستهلك",
+  "title_en": "Consumer Protection Law No. 181 of 2018 — E-Commerce Provisions",
+  "short_name": "EGCPL",
+  "status": "in_force",
+  "issued_date": "2018-11-03",
+  "in_force_date": "2019-01-01",
+  "url": "https://www.cpa.gov.eg/en/laws",
+  "description": "Egypt's Consumer Protection Law No. 181 of 2018 updates the consumer protection framework to address e-commerce and online transactions. The Law establishes the rights of consumers in electronic transactions, the obligations of online traders, the powers of the Consumer Protection Agency (CPA), and the penalties for violations. It is the primary instrument governing consumer rights in e-commerce in Egypt.",
+  "provisions": [
+    {
+      "provision_ref": "art1",
+      "section": "1",
+      "title": "Article 1. Definitions",
+      "content": "For the purposes of this Law: 'Consumer' means any natural person who obtains a product or service for direct personal use and not for the purpose of resale or commercial production; 'Supplier' means any natural or legal person who provides products or services to the consumer in the course of commercial activity; 'Electronic Commerce' means the purchase and sale of goods, products or services using electronic means of communication, including the Internet; 'Electronic Platform' means any website, application or other digital medium through which goods or services are offered to consumers; 'Consumer Protection Agency' (CPA) means the independent regulatory body established by this Law; 'Distance Contract' means a contract concluded between a supplier and a consumer without simultaneous physical presence, using one or more means of distance communication."
+    },
+    {
+      "provision_ref": "art2",
+      "section": "2",
+      "title": "Article 2. Scope of Application to E-Commerce",
+      "content": "This Law applies to all commercial transactions between suppliers and consumers conducted in Egypt, including transactions conducted through electronic means. For transactions conducted through electronic platforms established outside Egypt targeting consumers in Egypt, the foreign supplier shall comply with the consumer protection provisions applicable to suppliers established in Egypt. The Consumer Protection Agency (CPA) shall coordinate with the NTRA for the enforcement of consumer protection provisions in respect of electronic platforms. The CPA shall have the authority to request the NTRA to block electronic platforms that systematically violate consumer protection provisions and refuse to cooperate with the CPA, pending judicial confirmation."
+    },
+    {
+      "provision_ref": "art3",
+      "section": "3",
+      "title": "Article 3. Pre-Contractual Disclosure Obligations for E-Commerce",
+      "content": "Online suppliers shall, before the conclusion of a contract, clearly disclose to the consumer: (1) the full name and commercial registration number of the supplier; (2) the physical address and contact details of the supplier; (3) a detailed description of the goods or services offered; (4) the total price including all taxes and fees; (5) the payment methods accepted; (6) the delivery terms and estimated delivery period; (7) the terms, conditions and procedure for exercising the right of return and refund; (8) the after-sales service and warranty conditions. The disclosure shall be made in Arabic. The consumer shall be provided with an order confirmation containing all essential contract terms, sent to the consumer's registered electronic contact details immediately upon placement of the order."
+    },
+    {
+      "provision_ref": "art4",
+      "section": "4",
+      "title": "Article 4. Right of Return",
+      "content": "A consumer who purchases goods through electronic commerce shall have the right to return the goods and receive a full refund within 14 days of receipt without giving any reason. The right of return shall not apply to: (1) goods that have been manufactured or modified according to the consumer's specific requirements; (2) perishable goods; (3) sealed goods that have been unsealed and cannot be returned for hygiene or health reasons; (4) audio, video recordings or software that have been unsealed; (5) goods that have been fully consumed or used. The supplier shall refund the full purchase price within 7 days of receiving the returned goods in their original condition. The consumer shall bear the cost of return shipping unless the supplier made an error or delivered a defective product."
+    },
+    {
+      "provision_ref": "art5",
+      "section": "5",
+      "title": "Article 5. Warranty and Conformity",
+      "content": "Goods supplied by online suppliers shall: (1) conform to the description provided on the electronic platform; (2) be suitable for the purposes for which goods of the same type are normally used; (3) possess the quality and performance characteristics of similar goods. Where goods are defective or do not conform to the description, the consumer shall be entitled to: (1) repair or replacement of the goods at no charge within a reasonable period; (2) an appropriate price reduction; (3) full refund and termination of the contract where repair or replacement is impossible or has not been completed within a reasonable period. The warranty period for goods sold through electronic commerce shall be the same as for goods sold through physical outlets, as determined by the applicable product regulations."
+    },
+    {
+      "provision_ref": "art6",
+      "section": "6",
+      "title": "Article 6. Electronic Platforms and Marketplace Liability",
+      "content": "Operators of electronic platforms enabling third-party sellers to offer goods and services to consumers shall: (1) verify the commercial registration of sellers before allowing them to list products; (2) clearly disclose the identity of the actual seller; (3) implement a complaints mechanism for consumers; (4) cooperate with the CPA in investigations of violations by sellers on the platform; (5) remove products found to be in violation of applicable laws upon CPA notification. An electronic platform operator shall be jointly liable with a seller where: (1) the platform presented itself as the seller; (2) the consumer could not reasonably have identified the actual seller; (3) the platform had actual knowledge of the violation and failed to act. The CPA shall establish specific obligations for large electronic platform operators based on transaction volumes."
+    },
+    {
+      "provision_ref": "art7",
+      "section": "7",
+      "title": "Article 7. Consumer Protection Agency (CPA)",
+      "content": "The Consumer Protection Agency (CPA) is an independent regulatory body with legal personality, reporting to the Prime Minister. The CPA shall: (1) monitor compliance with this Law and applicable product safety regulations; (2) receive and process consumer complaints; (3) conduct market surveillance activities, including inspections of electronic platforms; (4) issue and publish product safety alerts; (5) impose administrative sanctions for violations; (6) coordinate with sector regulators on consumer protection in specific sectors; (7) cooperate with foreign consumer protection authorities on cross-border complaints. The CPA shall publish annual reports on its activities, the number and nature of complaints received, and enforcement actions taken. The CPA shall maintain a publicly accessible consumer complaints portal."
+    },
+    {
+      "provision_ref": "art8",
+      "section": "8",
+      "title": "Article 8. Penalties for E-Commerce Violations",
+      "content": "Violations of consumer protection obligations in e-commerce shall be subject to the following penalties: (1) failure to provide pre-contractual disclosures — fine not less than EGP 10,000 and not exceeding EGP 100,000; (2) failure to implement the right of return — fine not less than EGP 25,000 and not exceeding EGP 250,000; (3) supplying goods that are counterfeit, defective or do not conform to safety standards — imprisonment not exceeding two years and fine not less than EGP 50,000; (4) repeated violations — penalties doubled; (5) violations resulting in serious consumer harm — additional penalty of suspension of commercial licence for up to 6 months. The CPA may publish the identity of repeated violators on its website as a deterrent. Criminal prosecution for consumer fraud shall be handled by the public prosecution."
+    }
+  ],
+  "definitions": [
+    {
+      "term": "المستهلك (Consumer)",
+      "definition": "Any natural person who obtains a product or service for direct personal use and not for the purpose of resale or commercial production.",
+      "source_provision": "art1"
+    },
+    {
+      "term": "التجارة الإلكترونية (Electronic Commerce)",
+      "definition": "The purchase and sale of goods, products or services using electronic means of communication, including the Internet.",
+      "source_provision": "art1"
+    },
+    {
+      "term": "جهاز حماية المستهلك (Consumer Protection Agency / CPA)",
+      "definition": "The independent regulatory body established by Law No. 181 of 2018 to monitor compliance with consumer protection legislation and handle consumer complaints.",
+      "source_provision": "art1"
+    }
+  ]
+}
