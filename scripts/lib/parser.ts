@@ -154,7 +154,7 @@ export function parseLawDetailHtml(html: string, detailUrl: string): PortalLawDe
   const effectiveDate = normalizeDate(extractInfoValue(html, 'Effective Date')) ?? issueDate;
 
   const attachments: LawAttachment[] = [];
-  const attachmentRegex = /<div class="attachment-item">([\s\S]*?)<\/div>\s*<\/div>/gi;
+  const attachmentRegex = /<div class="attachment-item">([\s\S]*?)<\/a>\s*<\/div>/gi;
   let attachmentMatch: RegExpExecArray | null;
 
   while ((attachmentMatch = attachmentRegex.exec(html)) !== null) {
@@ -351,11 +351,19 @@ export function buildSeedFromPdfText(
   law: PortalLawDetail,
   pdfTextRaw: string,
   sourcePdfUrl: string,
-  options?: { allowOrdinalFallback?: boolean },
+  options?: {
+    allowOrdinalFallback?: boolean;
+    idSuffix?: string;
+    preferCanonicalLawTitle?: boolean;
+    titleEnOverride?: string;
+    shortNameOverride?: string;
+    urlOverride?: string;
+  },
 ): ParsedAct | null {
   const normalizedText = normalizePdfText(pdfTextRaw);
   const lines = normalizedText.split('\n');
   const allowOrdinalFallback = options?.allowOrdinalFallback ?? false;
+  const preferCanonicalLawTitle = options?.preferCanonicalLawTitle ?? true;
 
   const sections: { section: string; startLine: number }[] = [];
   for (let i = 0; i < lines.length; i++) {
@@ -408,25 +416,27 @@ export function buildSeedFromPdfText(
   const canonicalTitleAr = `قانون رقم ${law.lawNumber} لسنة ${law.lawYear}`;
   const normalizedLawNumber = normalizeArabicDigits(law.lawNumber);
   const normalizedLawYear = normalizeArabicDigits(law.lawYear);
-
-  const titleAr = parsedTitleAr
+  const parsedTitleMatchesLaw = parsedTitleAr
     && normalizeArabicDigits(parsedTitleAr).includes(normalizedLawNumber)
-    && normalizeArabicDigits(parsedTitleAr).includes(normalizedLawYear)
-    ? parsedTitleAr
-    : canonicalTitleAr;
+    && normalizeArabicDigits(parsedTitleAr).includes(normalizedLawYear);
 
-  const id = `eg-law-${law.lawNumber}-${law.lawYear}`;
+  const titleAr = parsedTitleMatchesLaw
+    ? parsedTitleAr
+    : (preferCanonicalLawTitle ? canonicalTitleAr : (parsedTitleAr ?? canonicalTitleAr));
+
+  const baseId = `eg-law-${law.lawNumber}-${law.lawYear}`;
+  const id = options?.idSuffix ? `${baseId}-${options.idSuffix}` : baseId;
 
   return {
     id,
     type: 'statute',
     title: titleAr,
-    title_en: law.titleEn || undefined,
-    short_name: law.shortName,
+    title_en: options?.titleEnOverride || law.titleEn || undefined,
+    short_name: options?.shortNameOverride || law.shortName,
     status: law.status,
     issued_date: law.issuedDate,
     in_force_date: law.effectiveDate,
-    url: law.detailUrl,
+    url: options?.urlOverride || law.detailUrl,
     description: law.description
       ? `${law.description} [PDF: ${sourcePdfUrl}]`
       : `Source PDF: ${sourcePdfUrl}`,

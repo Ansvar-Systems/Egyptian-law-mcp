@@ -7,7 +7,7 @@
  *
  * Strategy:
  * 1. Discover law detail pages from official categories.
- * 2. Fetch law metadata and official PDF attachment.
+ * 2. Fetch law metadata and all official PDF attachments.
  * 3. Extract text via pdftotext, optionally fallback to OCR for image-only PDFs.
  * 4. Parse article-level provisions and write seed JSON under data/seed.
  */
@@ -23,6 +23,8 @@ import {
   extractLawIdsFromCategoryHtml,
   parseLawDetailHtml,
   selectPrimaryAttachment,
+  type LawAttachment,
+  type PortalLawDetail,
   type ParsedAct,
 } from './lib/parser.js';
 
@@ -57,6 +59,10 @@ interface ProcessOptions {
 interface IngestResult {
   lawId: number;
   docId?: string;
+  attachment_title?: string;
+  attachment_href?: string;
+  attachment_download_id?: string;
+  is_primary_attachment?: boolean;
   status: 'ok' | 'skipped' | 'error';
   reason?: string;
   provisions?: number;
@@ -289,41 +295,54 @@ async function loadCategoryLawIds(categoryIds: number[], skipFetch: boolean): Pr
   return [...ids].sort((a, b) => a - b);
 }
 
-async function processLaw(lawId: number, options: ProcessOptions): Promise<IngestResult> {
-  const detailCachePath = path.join(SOURCE_DIR, `law-${lawId}.html`);
+function normalizeAttachmentTitle(title: string): string | undefined {
+  const normalized = title.replace(/\s+/g, ' ').trim();
+  return normalized.length > 0 ? normalized : undefined;
+}
 
-  let html: string;
-  if (options.skipFetch && fs.existsSync(detailCachePath)) {
-    html = fs.readFileSync(detailCachePath, 'utf-8');
-  } else {
-    const detailResponse = await fetchTextWithRateLimit(detailUrl(lawId));
-    if (detailResponse.status !== 200) {
-      return { lawId, status: 'error', reason: `detail HTTP ${detailResponse.status}` };
+function uniqueAttachments(attachments: LawAttachment[]): LawAttachment[] {
+  const unique = new Map<string, LawAttachment>();
+
+  for (const attachment of attachments) {
+    const href = attachment.href.trim();
+    if (!href) continue;
+    if (!unique.has(href)) {
+      unique.set(href, {
+        title: normalizeAttachmentTitle(attachment.title) ?? '',
+        href,
+      });
     }
-    html = detailResponse.body;
-    fs.writeFileSync(detailCachePath, html, 'utf-8');
   }
 
-  const law = parseLawDetailHtml(html, detailUrl(lawId));
-  if (!law) {
-    return { lawId, status: 'skipped', reason: 'unable to parse law metadata' };
-  }
+  return [...unique.values()];
+}
 
-  const attachment = selectPrimaryAttachment(law.attachments);
-  if (!attachment) {
-    return { lawId, status: 'skipped', reason: 'no downloadable PDF attachment' };
-  }
+async function processAttachment(
+  lawId: number,
+  law: PortalLawDetail,
+  attachment: LawAttachment,
+  isPrimaryAttachment: boolean,
+  options: ProcessOptions,
+): Promise<IngestResult> {
+  const attachmentTitle = normalizeAttachmentTitle(attachment.title);
 
   const pdfUrl = resolveUrl(PORTAL_BASE_URL, attachment.href);
   const downloadId = attachment.href.match(/\/(\d+)$/)?.[1] ?? 'unknown';
   const pdfPath = path.join(SOURCE_DIR, `law-${lawId}-download-${downloadId}.pdf`);
   const textPath = path.join(SOURCE_DIR, `law-${lawId}-download-${downloadId}.txt`);
   const ocrTextPath = path.join(SOURCE_DIR, `law-${lawId}-download-${downloadId}.ocr.txt`);
+  const attachmentMeta = {
+    lawId,
+    attachment_title: attachmentTitle,
+    attachment_href: attachment.href,
+    attachment_download_id: downloadId,
+    is_primary_attachment: isPrimaryAttachment,
+  };
 
   if (!(options.skipFetch && fs.existsSync(pdfPath))) {
     const pdfResponse = await fetchBinaryWithRateLimit(pdfUrl);
     if (pdfResponse.status !== 200) {
-      return { lawId, status: 'error', reason: `pdf HTTP ${pdfResponse.status}` };
+      return { ...attachmentMeta, status: 'error', reason: `pdf HTTP ${pdfResponse.status}` };
     }
     fs.writeFileSync(pdfPath, pdfResponse.body);
   }
@@ -337,7 +356,7 @@ async function processLaw(lawId: number, options: ProcessOptions): Promise<Inges
   if (!hasMeaningfulText(extractedText)) {
     if (!options.allowOcr) {
       return {
-        lawId,
+        ...attachmentMeta,
         status: 'skipped',
         reason: 'PDF text is empty/image-only (rerun with --allow-ocr to attempt OCR fallback)',
       };
@@ -349,7 +368,7 @@ async function processLaw(lawId: number, options: ProcessOptions): Promise<Inges
 
       if (!hasMeaningfulText(ocrText)) {
         return {
-          lawId,
+          ...attachmentMeta,
           status: 'skipped',
           reason: 'OCR fallback produced insufficient text',
         };
@@ -360,19 +379,28 @@ async function processLaw(lawId: number, options: ProcessOptions): Promise<Inges
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return {
-        lawId,
+        ...attachmentMeta,
         status: 'skipped',
         reason: `OCR fallback failed: ${message}`,
       };
     }
   }
 
+  const shortName = isPrimaryAttachment
+    ? law.shortName
+    : `${law.shortName} - ${attachmentTitle ?? `Attachment ${downloadId}`}`;
+
   const seed = buildSeedFromPdfText(law, finalText, pdfUrl, {
     allowOrdinalFallback: extractionMethod === 'ocr',
+    idSuffix: isPrimaryAttachment ? undefined : `att-${downloadId}`,
+    preferCanonicalLawTitle: isPrimaryAttachment,
+    titleEnOverride: isPrimaryAttachment ? law.titleEn : (attachmentTitle ?? law.titleEn),
+    shortNameOverride: shortName,
+    urlOverride: pdfUrl,
   });
   if (!seed) {
     return {
-      lawId,
+      ...attachmentMeta,
       status: 'skipped',
       reason: 'no parseable article sections (مادة/Article) found in extracted text',
       extraction_method: extractionMethod,
@@ -383,7 +411,7 @@ async function processLaw(lawId: number, options: ProcessOptions): Promise<Inges
   fs.writeFileSync(seedPath, JSON.stringify(seed, null, 2));
 
   return {
-    lawId,
+    ...attachmentMeta,
     docId: seed.id,
     status: 'ok',
     provisions: seed.provisions.length,
@@ -392,12 +420,67 @@ async function processLaw(lawId: number, options: ProcessOptions): Promise<Inges
   };
 }
 
-function writeIngestionReport(results: IngestResult[], docs: ParsedAct[], categories: number[]): void {
+async function processLaw(lawId: number, options: ProcessOptions): Promise<IngestResult[]> {
+  const detailCachePath = path.join(SOURCE_DIR, `law-${lawId}.html`);
+
+  let html: string;
+  if (options.skipFetch && fs.existsSync(detailCachePath)) {
+    html = fs.readFileSync(detailCachePath, 'utf-8');
+  } else {
+    const detailResponse = await fetchTextWithRateLimit(detailUrl(lawId));
+    if (detailResponse.status !== 200) {
+      return [{ lawId, status: 'error', reason: `detail HTTP ${detailResponse.status}` }];
+    }
+    html = detailResponse.body;
+    fs.writeFileSync(detailCachePath, html, 'utf-8');
+  }
+
+  const law = parseLawDetailHtml(html, detailUrl(lawId));
+  if (!law) {
+    return [{ lawId, status: 'skipped', reason: 'unable to parse law metadata' }];
+  }
+
+  const attachments = uniqueAttachments(law.attachments);
+  if (attachments.length === 0) {
+    return [{ lawId, status: 'skipped', reason: 'no downloadable PDF attachment' }];
+  }
+
+  const primaryAttachment = selectPrimaryAttachment(attachments);
+  const primaryHref = primaryAttachment?.href;
+  const results: IngestResult[] = [];
+
+  for (const attachment of attachments) {
+    const isPrimaryAttachment = primaryHref ? attachment.href === primaryHref : false;
+    const result = await processAttachment(
+      lawId,
+      law,
+      attachment,
+      isPrimaryAttachment,
+      options,
+    );
+    results.push(result);
+  }
+
+  return results;
+}
+
+function writeIngestionReport(
+  results: IngestResult[],
+  docs: ParsedAct[],
+  categories: number[],
+  lawDetailsProcessed: number,
+): void {
+  const ocrDocIds = results
+    .filter(r => r.status === 'ok' && r.extraction_method === 'ocr' && r.docId)
+    .map(r => r.docId as string);
+
   const report = {
     generated_at: new Date().toISOString(),
     source: `${PORTAL_BASE_URL}/publiclaws`,
     categories,
     totals: {
+      law_details_processed: lawDetailsProcessed,
+      attachment_attempts: results.length,
       processed: results.length,
       ingested: results.filter(r => r.status === 'ok').length,
       skipped: results.filter(r => r.status === 'skipped').length,
@@ -407,6 +490,7 @@ function writeIngestionReport(results: IngestResult[], docs: ParsedAct[], catego
       definitions: docs.reduce((sum, d) => sum + d.definitions.length, 0),
       pdftotext_docs: results.filter(r => r.status === 'ok' && r.extraction_method === 'pdftotext').length,
       ocr_docs: results.filter(r => r.status === 'ok' && r.extraction_method === 'ocr').length,
+      ocr_doc_ids: ocrDocIds,
     },
     results,
   };
@@ -449,31 +533,43 @@ async function main(): Promise<void> {
   const docs: ParsedAct[] = [];
 
   for (const lawId of lawIds) {
-    process.stdout.write(`- Law detail ${lawId}: `);
+    console.log(`- Law detail ${lawId}:`);
 
     try {
-      const result = await processLaw(lawId, { skipFetch, allowOcr, ocrLang });
-      results.push(result);
+      const lawResults = await processLaw(lawId, { skipFetch, allowOcr, ocrLang });
 
-      if (result.status === 'ok' && result.docId) {
-        const seedPath = path.join(SEED_DIR, `${result.docId}.json`);
-        const parsed = JSON.parse(fs.readFileSync(seedPath, 'utf-8')) as ParsedAct;
-        docs.push(parsed);
-        const method = result.extraction_method ?? 'pdftotext';
-        console.log(`OK (${result.provisions} provisions, ${result.definitions} definitions, ${method})`);
-      } else if (result.status === 'skipped') {
-        console.log(`SKIPPED (${result.reason})`);
-      } else {
-        console.log(`ERROR (${result.reason})`);
+      for (const result of lawResults) {
+        results.push(result);
+        const attachmentLabel = result.attachment_download_id
+          ? `download ${result.attachment_download_id}`
+          : 'detail metadata';
+        const attachmentTitleSuffix = result.attachment_title
+          ? ` (${result.attachment_title})`
+          : '';
+        const prefix = `  - ${attachmentLabel}${attachmentTitleSuffix}: `;
+
+        if (result.status === 'ok' && result.docId) {
+          const seedPath = path.join(SEED_DIR, `${result.docId}.json`);
+          const parsed = JSON.parse(fs.readFileSync(seedPath, 'utf-8')) as ParsedAct;
+          docs.push(parsed);
+          const method = result.extraction_method ?? 'pdftotext';
+          console.log(
+            `${prefix}OK -> ${result.docId} (${result.provisions} provisions, ${result.definitions} definitions, ${method})`,
+          );
+        } else if (result.status === 'skipped') {
+          console.log(`${prefix}SKIPPED (${result.reason})`);
+        } else {
+          console.log(`${prefix}ERROR (${result.reason})`);
+        }
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       results.push({ lawId, status: 'error', reason: message });
-      console.log(`ERROR (${message})`);
+      console.log(`  - detail metadata: ERROR (${message})`);
     }
   }
 
-  writeIngestionReport(results, docs, categoryIds);
+  writeIngestionReport(results, docs, categoryIds, lawIds.length);
 
   const ingested = results.filter(r => r.status === 'ok').length;
   const skipped = results.filter(r => r.status === 'skipped').length;
@@ -484,7 +580,8 @@ async function main(): Promise<void> {
 
   console.log('\nIngestion Summary');
   console.log('-----------------');
-  console.log(`Processed:   ${results.length}`);
+  console.log(`Law details: ${lawIds.length}`);
+  console.log(`Processed:   ${results.length} attachments`);
   console.log(`Ingested:    ${ingested}`);
   console.log(`Skipped:     ${skipped}`);
   console.log(`Errors:      ${errors}`);

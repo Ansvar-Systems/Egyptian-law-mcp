@@ -6,11 +6,13 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import Database from 'better-sqlite3';
 import * as path from 'path';
+import * as fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DB_PATH = path.resolve(__dirname, '../../data/database.db');
+const SEED_DIR = path.resolve(__dirname, '../../data/seed');
 
 let db: InstanceType<typeof Database>;
 
@@ -20,9 +22,11 @@ beforeAll(() => {
 });
 
 describe('Database integrity', () => {
-  it('should have 8 legal documents', () => {
+  it('should match legal document count to seed JSON files', () => {
     const row = db.prepare('SELECT COUNT(*) as cnt FROM legal_documents').get() as { cnt: number };
-    expect(row.cnt).toBe(8);
+    const seedCount = fs.readdirSync(SEED_DIR).filter(file => file.endsWith('.json')).length;
+    expect(row.cnt).toBe(seedCount);
+    expect(row.cnt).toBeGreaterThanOrEqual(8);
   });
 
   it('should have at least 670 provisions', () => {
