@@ -1,6 +1,6 @@
 {
   "name": "@ansvar/egyptian-law-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "mcpName": "eu.ansvar/egyptian-law-mcp",
   "description": "Egyptian law database covering data protection, cybersecurity, e-commerce, and criminal law provisions via Model Context Protocol",
   "author": "Ansvar Systems <hello@ansvar.eu>",
