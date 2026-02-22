@@ -19,6 +19,7 @@ import { spawnSync } from 'child_process';
 import { fetchBinaryWithRateLimit, fetchTextWithRateLimit, resolveUrl } from './lib/fetcher.js';
 import {
   buildSeedFromPdfText,
+  extractCategoryIdsFromIndexHtml,
   extractLawIdsFromCategoryHtml,
   parseLawDetailHtml,
   selectPrimaryAttachment,
@@ -32,7 +33,13 @@ const SOURCE_DIR = path.resolve(__dirname, '../data/source');
 const SEED_DIR = path.resolve(__dirname, '../data/seed');
 
 const PORTAL_BASE_URL = 'https://portal.investment.gov.eg';
-const LAW_CATEGORIES = [16, 17];
+const DEFAULT_CATEGORY_IDS = [16, 17];
+const CATEGORY_STATUS_FILTERS = [
+  { label: 'all', query: '' },
+  { label: 'active', query: '?status=Active' },
+  { label: 'amended', query: '?status=Amended' },
+  { label: 'repealed', query: '?status=Repealed' },
+];
 
 interface CliArgs {
   limit: number | null;
@@ -96,6 +103,10 @@ function clearOldSeeds(): void {
 
 function categoryUrl(categoryId: number): string {
   return `${PORTAL_BASE_URL}/publiclaws/category/${categoryId}`;
+}
+
+function indexUrl(): string {
+  return `${PORTAL_BASE_URL}/publiclaws/index`;
 }
 
 function detailUrl(lawId: number): string {
@@ -225,27 +236,53 @@ function hasMeaningfulText(text: string): boolean {
   return text.replace(/\s+/g, '').length > 100;
 }
 
-async function loadCategoryLawIds(skipFetch: boolean): Promise<number[]> {
+async function loadCategoryIds(skipFetch: boolean): Promise<number[]> {
+  const cachePath = path.join(SOURCE_DIR, 'publiclaws-index.html');
+
+  let html: string;
+  if (skipFetch && fs.existsSync(cachePath)) {
+    html = fs.readFileSync(cachePath, 'utf-8');
+  } else {
+    const response = await fetchTextWithRateLimit(indexUrl());
+    if (response.status !== 200) {
+      throw new Error(`Failed to fetch ${indexUrl()}: HTTP ${response.status}`);
+    }
+    html = response.body;
+    fs.writeFileSync(cachePath, html, 'utf-8');
+  }
+
+  const discovered = extractCategoryIdsFromIndexHtml(html);
+  if (discovered.length > 0) return discovered;
+
+  return DEFAULT_CATEGORY_IDS;
+}
+
+async function loadCategoryLawIds(categoryIds: number[], skipFetch: boolean): Promise<number[]> {
   const ids = new Set<number>();
 
-  for (const categoryId of LAW_CATEGORIES) {
-    const url = categoryUrl(categoryId);
-    const cachePath = path.join(SOURCE_DIR, `category-${categoryId}.html`);
+  for (const categoryId of categoryIds) {
+    for (const status of CATEGORY_STATUS_FILTERS) {
+      const url = `${categoryUrl(categoryId)}${status.query}`;
+      const cachePath = path.join(SOURCE_DIR, `category-${categoryId}-${status.label}.html`);
+      const legacyCachePath = path.join(SOURCE_DIR, `category-${categoryId}.html`);
 
-    let html: string;
-    if (skipFetch && fs.existsSync(cachePath)) {
-      html = fs.readFileSync(cachePath, 'utf-8');
-    } else {
-      const response = await fetchTextWithRateLimit(url);
-      if (response.status !== 200) {
-        throw new Error(`Failed to fetch ${url}: HTTP ${response.status}`);
+      let html: string;
+      if (skipFetch && fs.existsSync(cachePath)) {
+        html = fs.readFileSync(cachePath, 'utf-8');
+      } else if (skipFetch && status.label === 'all' && fs.existsSync(legacyCachePath)) {
+        html = fs.readFileSync(legacyCachePath, 'utf-8');
+      } else {
+        const response = await fetchTextWithRateLimit(url);
+        if (response.status !== 200) {
+          throw new Error(`Failed to fetch ${url}: HTTP ${response.status}`);
+        }
+        html = response.body;
+        fs.writeFileSync(cachePath, html, 'utf-8');
       }
-      html = response.body;
-      fs.writeFileSync(cachePath, html, 'utf-8');
-    }
 
-    for (const lawId of extractLawIdsFromCategoryHtml(html)) {
-      ids.add(lawId);
+      for (const lawId of extractLawIdsFromCategoryHtml(html)) {
+        ids.add(lawId);
+      }
     }
   }
 
@@ -355,11 +392,11 @@ async function processLaw(lawId: number, options: ProcessOptions): Promise<Inges
   };
 }
 
-function writeIngestionReport(results: IngestResult[], docs: ParsedAct[]): void {
+function writeIngestionReport(results: IngestResult[], docs: ParsedAct[], categories: number[]): void {
   const report = {
     generated_at: new Date().toISOString(),
     source: `${PORTAL_BASE_URL}/publiclaws`,
-    categories: LAW_CATEGORIES,
+    categories,
     totals: {
       processed: results.length,
       ingested: results.filter(r => r.status === 'ok').length,
@@ -400,9 +437,11 @@ async function main(): Promise<void> {
   }
   console.log('');
 
-  const discoveredLawIds = await loadCategoryLawIds(skipFetch);
+  const categoryIds = await loadCategoryIds(skipFetch);
+  const discoveredLawIds = await loadCategoryLawIds(categoryIds, skipFetch);
   const lawIds = limit ? discoveredLawIds.slice(0, limit) : discoveredLawIds;
 
+  console.log(`Discovered ${categoryIds.length} categories: ${categoryIds.join(', ')}`);
   console.log(`Discovered ${discoveredLawIds.length} laws in official categories.`);
   console.log(`Processing ${lawIds.length} law detail pages...\n`);
 
@@ -434,7 +473,7 @@ async function main(): Promise<void> {
     }
   }
 
-  writeIngestionReport(results, docs);
+  writeIngestionReport(results, docs, categoryIds);
 
   const ingested = results.filter(r => r.status === 'ok').length;
   const skipped = results.filter(r => r.status === 'skipped').length;

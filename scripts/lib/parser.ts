@@ -128,6 +128,18 @@ export function extractLawIdsFromCategoryHtml(html: string): number[] {
   return [...ids].sort((a, b) => a - b);
 }
 
+export function extractCategoryIdsFromIndexHtml(html: string): number[] {
+  const ids = new Set<number>();
+  const regex = /\/publiclaws\/category\/(\d+)/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(html)) !== null) {
+    ids.add(Number.parseInt(match[1], 10));
+  }
+
+  return [...ids].sort((a, b) => a - b);
+}
+
 export function parseLawDetailHtml(html: string, detailUrl: string): PortalLawDetail | null {
   const lawNumberYearMatch = html.match(/Law\s+(\d+)\s*\/\s*(\d{4})/i);
   if (!lawNumberYearMatch) return null;
