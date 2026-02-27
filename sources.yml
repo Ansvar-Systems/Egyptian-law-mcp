@@ -3,24 +3,42 @@ mcp_name: "Egyptian Law MCP"
 jurisdiction: "EG"
 
 sources:
-  - name: "Public Laws Portal"
+  - name: "Public Laws Portal (primary, currently offline)"
     authority: "Ministry of Investment and Foreign Trade (Egypt)"
     official_portal: "https://portal.investment.gov.eg/publiclaws"
     retrieval_method: "HTML_INDEX + CATEGORY_FILTER_CRAWL + ALL_ATTACHMENT_DOWNLOAD + PDF_TEXT_EXTRACTION + OPTIONAL_OCR"
     update_frequency: "weekly"
     last_ingested: "2026-02-22"
+    status: "offline (HTTP 404 since 2026-02-25)"
     license_or_terms:
       type: "Government Website Terms"
       url: "https://portal.investment.gov.eg/publiclaws"
       summary: "Legislation metadata and downloadable law PDFs published on official government domain."
     coverage:
       scope: "All discoverable Public Laws Portal law detail pages and all downloadable PDF attachments (categories discovered from /publiclaws/index; currently 16 and 17)"
-      limitations: "Some PDFs are image-based and require OCR fallback; OCR-derived text may include recognition noise."
+      limitations: "Portal returned HTTP 404 as of 2026-02-25. Use manshurat.org as fallback."
     languages:
       - "ar"
       - "en"
 
+  - name: "Manshurat Qanuniyya (fallback)"
+    authority: "Law and Society Research Unit, American University in Cairo"
+    official_portal: "https://manshurat.org/taxonomy/term/23"
+    retrieval_method: "TAXONOMY_LISTING_CRAWL + NODE_DETAIL_SCRAPE + PDF_DOWNLOAD + PDF_TEXT_EXTRACTION + ARABIC_PRESENTATION_FORMS_NORMALIZATION"
+    update_frequency: "weekly"
+    last_ingested: "2026-02-26"
+    status: "active"
+    license_or_terms:
+      type: "Free Legal Archive"
+      url: "https://manshurat.org"
+      summary: "Free digital legal archive of Egyptian legal materials. Hosted by the Law and Society Research Unit, School of Global Affairs and Public Policy, American University in Cairo."
+    coverage:
+      scope: "Laws category (taxonomy/term/23): 16,400 discoverable law pages across 656 listing pages. Currently 137 laws ingested with 1,234 provisions from years 2021-2025. Full corpus ingestion in progress (resumable checkpoint at 219/16,400 processed)."
+      limitations: "Budget appropriation laws and some short amendment decrees lack article-level structure (مادة headings). Image-only PDFs require OCR fallback. Arabic Presentation Forms (U+FE70-U+FEFF) normalization required for article parsing. Server rate-limits after ~100 requests; batch ingestion with 10s delay and 5-min inter-batch pauses required."
+    languages:
+      - "ar"
+
 data_freshness:
   automated_checks: true
   check_frequency: "weekly"
-  last_verified: "2026-02-22"
+  last_verified: "2026-02-26"

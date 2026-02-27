@@ -1,0 +1,148 @@
+Egyptian Law MCP -- Manshurat.org Full Corpus Ingestion
+=======================================================
+Source: https://manshurat.org/taxonomy/term/23
+Rate limit: 1.5s between requests
+Limit: 30 laws
+Resuming from checkpoint
+
+Using 16400 previously discovered law paths.
+
+Total discovered: 16400 laws
+Already processed: 220
+To process: 30
+
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-ml-lwkl-ltjry-wbd-ml-lwst-ltjry-wlqnwn-lmrfq-lh-blqnwn-rqm-21-lsn: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-ml-lwkl-ltjry-wbd-ml-lwst-ltjry-wlqnwn-lmrfq-lh-blqnwn-rqm-21-lsn: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-ml-lwkl-ltjry-wbd-ml-lwst-ltjry-wlqnwn-lmrfq-lh-blqnwn-rqm-21-lsn: fetch failed, backing off 16000ms (attempt 3/3)
+[1/30] ERROR: /content/tdyl-bd-hkm-qnwn-tnzym-ml-lwkl-ltjry-wbd-ml-lwst-ltjry-wlqnwn-lmrfq-lh-blqnwn-rqm-21-lsn -- This operation was aborted
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-mkfh-lhjr-gyr-lshry-wthryb-lmhjryn-blqnwn-rqm-22-lsn-2022: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-mkfh-lhjr-gyr-lshry-wthryb-lmhjryn-blqnwn-rqm-22-lsn-2022: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-mkfh-lhjr-gyr-lshry-wthryb-lmhjryn-blqnwn-rqm-22-lsn-2022: fetch failed, backing off 16000ms (attempt 3/3)
+[2/30] ERROR: /content/tdyl-bd-hkm-qnwn-mkfh-lhjr-gyr-lshry-wthryb-lmhjryn-blqnwn-rqm-22-lsn-2022 -- fetch failed
+  Fetch error on https://manshurat.org/content/thdyd-md-twfyq-lwd-lmqrr-bqnwn-tnzym-mmrs-lml-lhly: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/thdyd-md-twfyq-lwd-lmqrr-bqnwn-tnzym-mmrs-lml-lhly: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/thdyd-md-twfyq-lwd-lmqrr-bqnwn-tnzym-mmrs-lml-lhly: fetch failed, backing off 16000ms (attempt 3/3)
+[3/30] ERROR: /content/thdyd-md-twfyq-lwd-lmqrr-bqnwn-tnzym-mmrs-lml-lhly -- fetch failed
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-slm-lsfn-blqnwn-rqm-24-lsn-2022: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-slm-lsfn-blqnwn-rqm-24-lsn-2022: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-slm-lsfn-blqnwn-rqm-24-lsn-2022: fetch failed, backing off 16000ms (attempt 3/3)
+[4/30] ERROR: /content/tdyl-bd-hkm-qnwn-slm-lsfn-blqnwn-rqm-24-lsn-2022 -- fetch failed
+  Fetch error on https://manshurat.org/content/tdyl-qnwn-bd-lhkm-lkhs-blqtn-wlg-qnwn-nsh-sndwq-thsyn-lqtn-lmsry-f-qlym-msr: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-qnwn-bd-lhkm-lkhs-blqtn-wlg-qnwn-nsh-sndwq-thsyn-lqtn-lmsry-f-qlym-msr: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-qnwn-bd-lhkm-lkhs-blqtn-wlg-qnwn-nsh-sndwq-thsyn-lqtn-lmsry-f-qlym-msr: This operation was aborted, backing off 16000ms (attempt 3/3)
+[5/30] ERROR: /content/tdyl-qnwn-bd-lhkm-lkhs-blqtn-wlg-qnwn-nsh-sndwq-thsyn-lqtn-lmsry-f-qlym-msr -- fetch failed
+  Fetch error on https://manshurat.org/content/sdr-qnwn-ltkhtyt-lm-lldwl: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/sdr-qnwn-ltkhtyt-lm-lldwl: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/sdr-qnwn-ltkhtyt-lm-lldwl: fetch failed, backing off 16000ms (attempt 3/3)
+[6/30] ERROR: /content/sdr-qnwn-ltkhtyt-lm-lldwl -- fetch failed
+  Fetch error on https://manshurat.org/content/sdr-qnwn-nsh-sndwq-dm-lsyh-wlathr: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/sdr-qnwn-nsh-sndwq-dm-lsyh-wlathr: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/sdr-qnwn-nsh-sndwq-dm-lsyh-wlathr: fetch failed, backing off 16000ms (attempt 3/3)
+[7/30] ERROR: /content/sdr-qnwn-nsh-sndwq-dm-lsyh-wlathr -- fetch failed
+  Fetch error on https://manshurat.org/content/tjyl-mwd-sthqq-llwt-ldwry-wmnh-lw-khs-lgyr-lmkhtbyn-bqnwn-lkhdm-lmdny-wzyd-lhfz-ldf-llmlyn: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tjyl-mwd-sthqq-llwt-ldwry-wmnh-lw-khs-lgyr-lmkhtbyn-bqnwn-lkhdm-lmdny-wzyd-lhfz-ldf-llmlyn: This operation was aborted, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tjyl-mwd-sthqq-llwt-ldwry-wmnh-lw-khs-lgyr-lmkhtbyn-bqnwn-lkhdm-lmdny-wzyd-lhfz-ldf-llmlyn: fetch failed, backing off 16000ms (attempt 3/3)
+[8/30] ERROR: /content/tjyl-mwd-sthqq-llwt-ldwry-wmnh-lw-khs-lgyr-lmkhtbyn-bqnwn-lkhdm-lmdny-wzyd-lhfz-ldf-llmlyn -- fetch failed
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-lmrswm-bqnwn-bshn-lslh-lzry-blqnwn-rqm-15-lsn-2022: This operation was aborted, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-lmrswm-bqnwn-bshn-lslh-lzry-blqnwn-rqm-15-lsn-2022: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-lmrswm-bqnwn-bshn-lslh-lzry-blqnwn-rqm-15-lsn-2022: fetch failed, backing off 16000ms (attempt 3/3)
+[9/30] ERROR: /content/tdyl-bd-hkm-lmrswm-bqnwn-bshn-lslh-lzry-blqnwn-rqm-15-lsn-2022 -- fetch failed
+  Fetch error on https://manshurat.org/content/nsh-wtnzym-lmjls-lshy-lmsry: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/nsh-wtnzym-lmjls-lshy-lmsry: This operation was aborted, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/nsh-wtnzym-lmjls-lshy-lmsry: fetch failed, backing off 16000ms (attempt 3/3)
+[10/30] ERROR: /content/nsh-wtnzym-lmjls-lshy-lmsry -- fetch failed
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-swq-rs-lml-blqnwn-rqm-13-lsn-2022: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-swq-rs-lml-blqnwn-rqm-13-lsn-2022: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-swq-rs-lml-blqnwn-rqm-13-lsn-2022: fetch failed, backing off 16000ms (attempt 3/3)
+[11/30] ERROR: /content/tdyl-bd-hkm-qnwn-swq-rs-lml-blqnwn-rqm-13-lsn-2022 -- fetch failed
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-lsjwn-blqnwn-rqm-14-lsn-2022-tnzym-mrkz-lslh-wlthyl-lmjtm: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-lsjwn-blqnwn-rqm-14-lsn-2022-tnzym-mrkz-lslh-wlthyl-lmjtm: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-lsjwn-blqnwn-rqm-14-lsn-2022-tnzym-mrkz-lslh-wlthyl-lmjtm: fetch failed, backing off 16000ms (attempt 3/3)
+  Fetch error on https://manshurat.org/file/87963/download?token=oPuxA7uk: This operation was aborted, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/file/87963/download?token=oPuxA7uk: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/file/87963/download?token=oPuxA7uk: fetch failed, backing off 16000ms (attempt 3/3)
+[12/30] ERROR: /content/tdyl-bd-hkm-qnwn-tnzym-lsjwn-blqnwn-rqm-14-lsn-2022-tnzym-mrkz-lslh-wlthyl-lmjtm -- fetch failed
+  Fetch error on https://manshurat.org/content/sdr-qnwn-lmnshat-lfndqy-wlsyhy-2022: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/sdr-qnwn-lmnshat-lfndqy-wlsyhy-2022: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/sdr-qnwn-lmnshat-lfndqy-wlsyhy-2022: fetch failed, backing off 16000ms (attempt 3/3)
+[13/30] ERROR: /content/sdr-qnwn-lmnshat-lfndqy-wlsyhy-2022 -- fetch failed
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-lshhr-lqry-blqnwn-rqm-9-lsn-2022: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-lshhr-lqry-blqnwn-rqm-9-lsn-2022: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-lshhr-lqry-blqnwn-rqm-9-lsn-2022: fetch failed, backing off 16000ms (attempt 3/3)
+[14/30] ERROR: /content/tdyl-bd-hkm-qnwn-tnzym-lshhr-lqry-blqnwn-rqm-9-lsn-2022 -- fetch failed
+  Fetch error on https://manshurat.org/content/bd-ljrt-wmwyd-khl-lmkn-lmwjr-llshkhs-ltbry-lgyr-grd-lskny-fy-dw-lathr-wltdyt-lqtsdy-lfyrws: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/bd-ljrt-wmwyd-khl-lmkn-lmwjr-llshkhs-ltbry-lgyr-grd-lskny-fy-dw-lathr-wltdyt-lqtsdy-lfyrws: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/bd-ljrt-wmwyd-khl-lmkn-lmwjr-llshkhs-ltbry-lgyr-grd-lskny-fy-dw-lathr-wltdyt-lqtsdy-lfyrws: fetch failed, backing off 16000ms (attempt 3/3)
+[15/30] ERROR: /content/bd-ljrt-wmwyd-khl-lmkn-lmwjr-llshkhs-ltbry-lgyr-grd-lskny-fy-dw-lathr-wltdyt-lqtsdy-lfyrws -- This operation was aborted
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-nsh-hyy-tnmy-wstkhdm-ltq-ljdyd-wlmtjdd-wqnwn-thfyz-ntj-lkhrb-mn-msdr-ltq: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-nsh-hyy-tnmy-wstkhdm-ltq-ljdyd-wlmtjdd-wqnwn-thfyz-ntj-lkhrb-mn-msdr-ltq: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-nsh-hyy-tnmy-wstkhdm-ltq-ljdyd-wlmtjdd-wqnwn-thfyz-ntj-lkhrb-mn-msdr-ltq: fetch failed, backing off 16000ms (attempt 3/3)
+[16/30] ERROR: /content/tdyl-bd-hkm-qnwn-nsh-hyy-tnmy-wstkhdm-ltq-ljdyd-wlmtjdd-wqnwn-thfyz-ntj-lkhrb-mn-msdr-ltq -- fetch failed
+  Fetch error on https://manshurat.org/content/tnzym-wtnmy-stkhdm-ltknwlwjy-lmly-f-lnsht-lmly-gyr-lmsrfy: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tnzym-wtnmy-stkhdm-ltknwlwjy-lmly-f-lnsht-lmly-gyr-lmsrfy: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tnzym-wtnmy-stkhdm-ltknwlwjy-lmly-f-lnsht-lmly-gyr-lmsrfy: fetch failed, backing off 16000ms (attempt 3/3)
+[17/30] ERROR: /content/tnzym-wtnmy-stkhdm-ltknwlwjy-lmly-f-lnsht-lmly-gyr-lmsrfy -- fetch failed
+  Fetch error on https://manshurat.org/content/sdr-qnwn-lmly-lm-lmwhd: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/sdr-qnwn-lmly-lm-lmwhd: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/sdr-qnwn-lmly-lm-lmwhd: fetch failed, backing off 16000ms (attempt 3/3)
+[18/30] ERROR: /content/sdr-qnwn-lmly-lm-lmwhd -- fetch failed
+  Fetch error on https://manshurat.org/content/ldhn-lwzyr-lmly-bdmn-shrk-lthd-lrby-llnql-lbry-wlsyhy-swbr-jyt: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/ldhn-lwzyr-lmly-bdmn-shrk-lthd-lrby-llnql-lbry-wlsyhy-swbr-jyt: This operation was aborted, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/ldhn-lwzyr-lmly-bdmn-shrk-lthd-lrby-llnql-lbry-wlsyhy-swbr-jyt: fetch failed, backing off 16000ms (attempt 3/3)
+[19/30] ERROR: /content/ldhn-lwzyr-lmly-bdmn-shrk-lthd-lrby-llnql-lbry-wlsyhy-swbr-jyt -- fetch failed
+  Fetch error on https://manshurat.org/content/ylwl-nsb-mn-rsd-lsndyq-wlhsbt-lkhs-wlwhdt-dht-ltb-lkhs-wfwyd-lhyyt-lm-l-lkhzn-lm-lldwl: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/ylwl-nsb-mn-rsd-lsndyq-wlhsbt-lkhs-wlwhdt-dht-ltb-lkhs-wfwyd-lhyyt-lm-l-lkhzn-lm-lldwl: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/ylwl-nsb-mn-rsd-lsndyq-wlhsbt-lkhs-wlwhdt-dht-ltb-lkhs-wfwyd-lhyyt-lm-l-lkhzn-lm-lldwl: fetch failed, backing off 16000ms (attempt 3/3)
+[20/30] ERROR: /content/ylwl-nsb-mn-rsd-lsndyq-wlhsbt-lkhs-wlwhdt-dht-ltb-lkhs-wfwyd-lhyyt-lm-l-lkhzn-lm-lldwl -- fetch failed
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwny-ldryb-l-lqym-lmdf-wdryb-ldmg-blqnwn-rqm-3-lsn-2022: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwny-ldryb-l-lqym-lmdf-wdryb-ldmg-blqnwn-rqm-3-lsn-2022: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwny-ldryb-l-lqym-lmdf-wdryb-ldmg-blqnwn-rqm-3-lsn-2022: fetch failed, backing off 16000ms (attempt 3/3)
+[21/30] ERROR: /content/tdyl-bd-hkm-qnwny-ldryb-l-lqym-lmdf-wdryb-ldmg-blqnwn-rqm-3-lsn-2022 -- fetch failed
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-kdymy-lfnwn-blqnwn-rqm-2-lsn-2022: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-kdymy-lfnwn-blqnwn-rqm-2-lsn-2022: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/content/tdyl-bd-hkm-qnwn-tnzym-kdymy-lfnwn-blqnwn-rqm-2-lsn-2022: fetch failed, backing off 16000ms (attempt 3/3)
+[22/30] ERROR: /content/tdyl-bd-hkm-qnwn-tnzym-kdymy-lfnwn-blqnwn-rqm-2-lsn-2022 -- This operation was aborted
+[23/30] SKIP: /content/tdyl-bd-hkm-qnwn-tnzym-ljmt-blqnwn-rqm-1-lsn-2022 -- no parseable article sections (مادة/Article) found in extracted text
+  Fetch error on https://manshurat.org/node/74984: This operation was aborted, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/node/74984: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/node/74984: fetch failed, backing off 16000ms (attempt 3/3)
+[24/30] ERROR: /node/74984 -- fetch failed
+  Fetch error on https://manshurat.org/node/74983: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/node/74983: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/node/74983: This operation was aborted, backing off 16000ms (attempt 3/3)
+[25/30] ERROR: /node/74983 -- fetch failed
+  Fetch error on https://manshurat.org/node/74988: This operation was aborted, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/node/74988: This operation was aborted, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/node/74988: fetch failed, backing off 16000ms (attempt 3/3)
+[26/30] ERROR: /node/74988 -- fetch failed
+  Fetch error on https://manshurat.org/node/74884: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/node/74884: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/node/74884: fetch failed, backing off 16000ms (attempt 3/3)
+[27/30] ERROR: /node/74884 -- fetch failed
+  Fetch error on https://manshurat.org/node/74885: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/node/74885: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/node/74885: fetch failed, backing off 16000ms (attempt 3/3)
+[28/30] ERROR: /node/74885 -- fetch failed
+  Fetch error on https://manshurat.org/node/74886: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/node/74886: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/node/74886: fetch failed, backing off 16000ms (attempt 3/3)
+[29/30] ERROR: /node/74886 -- This operation was aborted
+  Fetch error on https://manshurat.org/node/74883: fetch failed, backing off 4000ms (attempt 1/3)
+  Fetch error on https://manshurat.org/node/74883: fetch failed, backing off 8000ms (attempt 2/3)
+  Fetch error on https://manshurat.org/node/74883: fetch failed, backing off 16000ms (attempt 3/3)
+[30/30] ERROR: /node/74883 -- fetch failed
+
+
+Ingestion Summary
+-----------------
+Laws discovered: 16400
+Processed:       30
+Ingested:        0
+Skipped:         1
+Errors:          29
+Documents:       0
+Provisions:      0
+Definitions:     0
+OCR docs:        0
+Report:          /home/ansvar/Projects/mcps/law-mcps/Egyptian-law-mcp/data/source-manshurat/ingestion-report.json
+Total seeds on disk: 137

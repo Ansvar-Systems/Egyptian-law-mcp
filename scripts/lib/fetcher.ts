@@ -1,20 +1,29 @@
 /**
  * Rate-limited HTTP client for Egyptian legislation ingestion.
  *
- * Source: Ministry of Investment and Foreign Trade portal
- * https://portal.investment.gov.eg/publiclaws
+ * Supports both portal.investment.gov.eg and manshurat.org sources.
  */
 
 const USER_AGENT = 'Egyptian-Law-MCP/1.0 (+https://github.com/Ansvar-Systems/Egyptian-law-mcp)';
-const MIN_DELAY_MS = 1500;
+const DEFAULT_MIN_DELAY_MS = 1500;
+const REQUEST_TIMEOUT_MS = 60_000;
 
+let minDelayMs = DEFAULT_MIN_DELAY_MS;
 let lastRequestAt = 0;
+
+/**
+ * Set the minimum delay between requests (in ms).
+ * Call this before starting ingestion to adjust rate limiting.
+ */
+export function setRateLimitDelay(ms: number): void {
+  minDelayMs = ms;
+}
 
 async function rateLimit(): Promise<void> {
   const now = Date.now();
   const elapsed = now - lastRequestAt;
-  if (elapsed < MIN_DELAY_MS) {
-    await new Promise(resolve => setTimeout(resolve, MIN_DELAY_MS - elapsed));
+  if (elapsed < minDelayMs) {
+    await new Promise(resolve => setTimeout(resolve, minDelayMs - elapsed));
   }
   lastRequestAt = Date.now();
 }
@@ -37,27 +46,45 @@ async function fetchWithRetry(url: string, maxRetries: number): Promise<Response
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     await rateLimit();
 
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': USER_AGENT,
-        'Accept': '*/*',
-      },
-      redirect: 'follow',
-    });
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-    if ((response.status === 429 || response.status >= 500) && attempt < maxRetries) {
-      const backoffMs = Math.pow(2, attempt + 1) * 1000;
-      await new Promise(resolve => setTimeout(resolve, backoffMs));
-      continue;
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': USER_AGENT,
+          'Accept': '*/*',
+        },
+        redirect: 'follow',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if ((response.status === 429 || response.status >= 500) && attempt < maxRetries) {
+        const backoffMs = Math.pow(2, attempt + 1) * 1000;
+        console.log(`  HTTP ${response.status} on ${url}, backing off ${backoffMs}ms (attempt ${attempt + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, backoffMs));
+        continue;
+      }
+
+      return response;
+    } catch (error) {
+      if (attempt < maxRetries) {
+        const backoffMs = Math.pow(2, attempt + 1) * 2000;
+        const reason = error instanceof Error ? error.message : String(error);
+        console.log(`  Fetch error on ${url}: ${reason}, backing off ${backoffMs}ms (attempt ${attempt + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, backoffMs));
+        continue;
+      }
+      throw error;
     }
-
-    return response;
   }
 
   throw new Error(`Failed to fetch ${url}`);
 }
 
-export async function fetchTextWithRateLimit(url: string, maxRetries = 2): Promise<TextFetchResult> {
+export async function fetchTextWithRateLimit(url: string, maxRetries = 3): Promise<TextFetchResult> {
   const response = await fetchWithRetry(url, maxRetries);
   const body = await response.text();
 
@@ -69,7 +96,7 @@ export async function fetchTextWithRateLimit(url: string, maxRetries = 2): Promi
   };
 }
 
-export async function fetchBinaryWithRateLimit(url: string, maxRetries = 2): Promise<BinaryFetchResult> {
+export async function fetchBinaryWithRateLimit(url: string, maxRetries = 3): Promise<BinaryFetchResult> {
   const response = await fetchWithRetry(url, maxRetries);
   const arrayBuffer = await response.arrayBuffer();
 

@@ -53,6 +53,175 @@ export interface PortalLawDetail {
 
 const BIDI_CONTROLS_REGEX = /[\u200e\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g;
 
+/**
+ * Normalize Arabic Presentation Forms (U+FB50-U+FDFF, U+FE70-U+FEFF) to
+ * standard Arabic script (U+0600-U+06FF). PDFs frequently emit presentation
+ * forms which breaks word matching.
+ *
+ * Also strips Arabic Tatweel/Kashida (U+0640) which is a stretching character.
+ */
+function normalizeArabicPresentationForms(text: string): string {
+  // Map Arabic Presentation Forms-B (FE70-FEFF) to base Arabic characters.
+  // Each Arabic letter has up to 4 presentation forms: isolated, final, initial, medial.
+  const FORMS_B: Record<number, number> = {
+    // Hamza
+    0xFE80: 0x0621,
+    // Alef with Madda
+    0xFE81: 0x0622, 0xFE82: 0x0622,
+    // Alef with Hamza Above
+    0xFE83: 0x0623, 0xFE84: 0x0623,
+    // Waw with Hamza Above
+    0xFE85: 0x0624, 0xFE86: 0x0624,
+    // Alef with Hamza Below
+    0xFE87: 0x0625, 0xFE88: 0x0625,
+    // Yeh with Hamza Above
+    0xFE89: 0x0626, 0xFE8A: 0x0626, 0xFE8B: 0x0626, 0xFE8C: 0x0626,
+    // Alef
+    0xFE8D: 0x0627, 0xFE8E: 0x0627,
+    // Beh
+    0xFE8F: 0x0628, 0xFE90: 0x0628, 0xFE91: 0x0628, 0xFE92: 0x0628,
+    // Teh Marbuta
+    0xFE93: 0x0629, 0xFE94: 0x0629,
+    // Teh
+    0xFE95: 0x062A, 0xFE96: 0x062A, 0xFE97: 0x062A, 0xFE98: 0x062A,
+    // Theh
+    0xFE99: 0x062B, 0xFE9A: 0x062B, 0xFE9B: 0x062B, 0xFE9C: 0x062B,
+    // Jeem
+    0xFE9D: 0x062C, 0xFE9E: 0x062C, 0xFE9F: 0x062C, 0xFEA0: 0x062C,
+    // Hah
+    0xFEA1: 0x062D, 0xFEA2: 0x062D, 0xFEA3: 0x062D, 0xFEA4: 0x062D,
+    // Khah
+    0xFEA5: 0x062E, 0xFEA6: 0x062E, 0xFEA7: 0x062E, 0xFEA8: 0x062E,
+    // Dal
+    0xFEA9: 0x062F, 0xFEAA: 0x062F,
+    // Thal
+    0xFEAB: 0x0630, 0xFEAC: 0x0630,
+    // Reh
+    0xFEAD: 0x0631, 0xFEAE: 0x0631,
+    // Zain
+    0xFEAF: 0x0632, 0xFEB0: 0x0632,
+    // Seen
+    0xFEB1: 0x0633, 0xFEB2: 0x0633, 0xFEB3: 0x0633, 0xFEB4: 0x0633,
+    // Sheen
+    0xFEB5: 0x0634, 0xFEB6: 0x0634, 0xFEB7: 0x0634, 0xFEB8: 0x0634,
+    // Sad
+    0xFEB9: 0x0635, 0xFEBA: 0x0635, 0xFEBB: 0x0635, 0xFEBC: 0x0635,
+    // Dad
+    0xFEBD: 0x0636, 0xFEBE: 0x0636, 0xFEBF: 0x0636, 0xFEC0: 0x0636,
+    // Tah
+    0xFEC1: 0x0637, 0xFEC2: 0x0637, 0xFEC3: 0x0637, 0xFEC4: 0x0637,
+    // Zah
+    0xFEC5: 0x0638, 0xFEC6: 0x0638, 0xFEC7: 0x0638, 0xFEC8: 0x0638,
+    // Ain
+    0xFEC9: 0x0639, 0xFECA: 0x0639, 0xFECB: 0x0639, 0xFECC: 0x0639,
+    // Ghain
+    0xFECD: 0x063A, 0xFECE: 0x063A, 0xFECF: 0x063A, 0xFED0: 0x063A,
+    // Feh
+    0xFED1: 0x0641, 0xFED2: 0x0641, 0xFED3: 0x0641, 0xFED4: 0x0641,
+    // Qaf
+    0xFED5: 0x0642, 0xFED6: 0x0642, 0xFED7: 0x0642, 0xFED8: 0x0642,
+    // Kaf
+    0xFED9: 0x0643, 0xFEDA: 0x0643, 0xFEDB: 0x0643, 0xFEDC: 0x0643,
+    // Lam
+    0xFEDD: 0x0644, 0xFEDE: 0x0644, 0xFEDF: 0x0644, 0xFEE0: 0x0644,
+    // Meem
+    0xFEE1: 0x0645, 0xFEE2: 0x0645, 0xFEE3: 0x0645, 0xFEE4: 0x0645,
+    // Noon
+    0xFEE5: 0x0646, 0xFEE6: 0x0646, 0xFEE7: 0x0646, 0xFEE8: 0x0646,
+    // Heh
+    0xFEE9: 0x0647, 0xFEEA: 0x0647, 0xFEEB: 0x0647, 0xFEEC: 0x0647,
+    // Waw
+    0xFEED: 0x0648, 0xFEEE: 0x0648,
+    // Alef Maksura
+    0xFEEF: 0x0649, 0xFEF0: 0x0649,
+    // Yeh
+    0xFEF1: 0x064A, 0xFEF2: 0x064A, 0xFEF3: 0x064A, 0xFEF4: 0x064A,
+    // Lam-Alef ligatures
+    0xFEF5: 0x0644, 0xFEF6: 0x0644, // Lam-Alef with Madda
+    0xFEF7: 0x0644, 0xFEF8: 0x0644, // Lam-Alef with Hamza Above
+    0xFEF9: 0x0644, 0xFEFA: 0x0644, // Lam-Alef with Hamza Below
+    0xFEFB: 0x0644, 0xFEFC: 0x0644, // Lam-Alef
+  };
+
+  // Map Arabic Presentation Forms-A (FB50-FDFF)
+  const FORMS_A: Record<number, number> = {
+    // Alef Wasla
+    0xFB50: 0x0671, 0xFB51: 0x0671,
+    // Peh
+    0xFB56: 0x067E, 0xFB57: 0x067E, 0xFB58: 0x067E, 0xFB59: 0x067E,
+    // Tcheh
+    0xFB7A: 0x0686, 0xFB7B: 0x0686, 0xFB7C: 0x0686, 0xFB7D: 0x0686,
+    // Gaf
+    0xFB92: 0x06AF, 0xFB93: 0x06AF, 0xFB94: 0x06AF, 0xFB95: 0x06AF,
+    // Farsi Yeh (used as Yeh in Egyptian typesetting)
+    0xFBFC: 0x064A, 0xFBFD: 0x064A, 0xFBFE: 0x064A, 0xFBFF: 0x064A,
+    // Various Lam-Alef ligatures (Presentation Forms-A)
+    0xFBEA: 0x0644, 0xFBEB: 0x0644,
+    0xFBEC: 0x0644, 0xFBED: 0x0644,
+    0xFBEE: 0x0644, 0xFBEF: 0x0644,
+    0xFBF0: 0x0644, 0xFBF1: 0x0644,
+  };
+
+  // Ligatures in Forms-A that decompose to multiple characters
+  const LIGATURE_DECOMP: Record<number, string> = {
+    0xFC43: '\u0644\u064A', // Lam-Yeh
+    0xFCC9: '\u0644\u062C', // Lam-Jeem
+    0xFCCC: '\u0644\u0645', // Lam-Meem
+    0xFC40: '\u0644\u062D', // Lam-Hah
+    0xFC41: '\u0644\u062E', // Lam-Khah
+    0xFC42: '\u0644\u0645', // Lam-Meem (initial)
+    0xFCCD: '\u0644\u0647', // Lam-Heh
+    0xFCCE: '\u0645\u062C', // Meem-Jeem
+    0xFCCF: '\u0645\u062D', // Meem-Hah
+    0xFCD0: '\u0645\u062E', // Meem-Khah
+    0xFCD1: '\u0645\u0645', // Meem-Meem
+  };
+
+  let result = '';
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+
+    // Strip Tatweel/Kashida
+    if (code === 0x0640) continue;
+
+    // Arabic Presentation Forms-B
+    if (code >= 0xFE70 && code <= 0xFEFF) {
+      const mapped = FORMS_B[code];
+      if (mapped) {
+        result += String.fromCharCode(mapped);
+
+        // Lam-Alef ligatures need to also emit Alef
+        if (code >= 0xFEF5 && code <= 0xFEFC) {
+          if (code <= 0xFEF6) result += '\u0622'; // Alef with Madda
+          else if (code <= 0xFEF8) result += '\u0623'; // Alef with Hamza Above
+          else if (code <= 0xFEFA) result += '\u0625'; // Alef with Hamza Below
+          else result += '\u0627'; // Plain Alef
+        }
+        continue;
+      }
+    }
+
+    // Arabic Presentation Forms-A (single character mappings)
+    if (code >= 0xFB50 && code <= 0xFDFF) {
+      // First check for ligatures that decompose to multiple characters
+      const ligature = LIGATURE_DECOMP[code];
+      if (ligature) {
+        result += ligature;
+        continue;
+      }
+      const mapped = FORMS_A[code];
+      if (mapped) {
+        result += String.fromCharCode(mapped);
+        continue;
+      }
+    }
+
+    result += text[i];
+  }
+
+  return result;
+}
+
 function escapeRegex(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -254,8 +423,10 @@ function parseSectionFromOrdinalWords(text: string): string | null {
 
 function parseArticleSection(line: string, allowOrdinalFallback = false): string | null {
   const normalized = normalizeArabicDigits(
-    line
-      .replace(BIDI_CONTROLS_REGEX, '')
+    normalizeArabicPresentationForms(
+      line
+        .replace(BIDI_CONTROLS_REGEX, '')
+    )
       .replace(/\s+/g, ' ')
       .trim(),
   );
@@ -270,12 +441,16 @@ function parseArticleSection(line: string, allowOrdinalFallback = false): string
     ? corrected.match(
       /^[\W_]*\(?\s*(?:ال)?(?:مادة|ماده)\s*([0-9]+(?:\s*مكرر(?:\s*[أ-ي])?)?)\s*\)?[\W_]*$/u,
     )
-    : corrected.match(/^مادة\s*([0-9]+(?:\s*مكرر(?:\s*[أ-ي])?)?)/u);
+    : corrected.match(
+      /^[\W_]*\(?\s*(?:ال)?(?:مادة|ماده)\s*\)?\s*\(?\s*([0-9]+(?:\s*مكرر(?:\s*[أ-ي])?)?)\s*\)?/u,
+    );
   if (numericHeadingMatch && (!allowOrdinalFallback || corrected.length <= 50)) {
     return numericHeadingMatch[1].replace(/\s+/g, ' ').trim();
   }
 
-  if (allowOrdinalFallback) {
+  // Try ordinal word headings (e.g., "المادة الأولى" = Article First)
+  // This is common in Egyptian Official Gazette PDF exports.
+  {
     const ordinalHeadingMatch = corrected.match(
       /^[\W_]*\(?\s*(?:ال)?(?:مادة|ماده)\s*([^\d][\p{Script=Arabic}\s]{2,30})\s*\)?[\W_]*$/u,
     );
@@ -283,7 +458,9 @@ function parseArticleSection(line: string, allowOrdinalFallback = false): string
       const parsedOrdinal = parseSectionFromOrdinalWords(ordinalHeadingMatch[1]);
       if (parsedOrdinal) return parsedOrdinal;
     }
+  }
 
+  if (allowOrdinalFallback) {
     // OCR may miss the word "مادة" but still preserve a short ordinal-only heading.
     if (corrected.length <= 40) {
       const parsedOrdinal = parseSectionFromOrdinalWords(corrected);
@@ -314,10 +491,12 @@ function buildProvisionRef(section: string, ordinal: number): string {
 }
 
 function normalizePdfText(pdfText: string): string {
-  return pdfText
-    .replace(/\r/g, '')
-    .replace(/\f/g, '\n')
-    .replace(BIDI_CONTROLS_REGEX, '');
+  return normalizeArabicPresentationForms(
+    pdfText
+      .replace(/\r/g, '')
+      .replace(/\f/g, '\n')
+      .replace(BIDI_CONTROLS_REGEX, ''),
+  );
 }
 
 function extractDefinitions(content: string, sourceProvision: string): ParsedDefinition[] {

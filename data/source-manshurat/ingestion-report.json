@@ -1,0 +1,198 @@
+{
+  "generated_at": "2026-02-27T03:33:59.174Z",
+  "source": "https://manshurat.org/taxonomy/term/23",
+  "totals": {
+    "laws_discovered": 16400,
+    "laws_processed": 30,
+    "ingested": 0,
+    "skipped": 30,
+    "errors": 0,
+    "documents": 0,
+    "provisions": 0,
+    "definitions": 0,
+    "pdftotext_docs": 0,
+    "ocr_docs": 0
+  },
+  "results": [
+    {
+      "path": "/node/25036",
+      "nodeId": "25036",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25037",
+      "nodeId": "25037",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25039",
+      "nodeId": "25039",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25040",
+      "nodeId": "25040",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25042",
+      "nodeId": "25042",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25044",
+      "nodeId": "25044",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25046",
+      "nodeId": "25046",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25049",
+      "nodeId": "25049",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25052",
+      "nodeId": "25052",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25054",
+      "nodeId": "25054",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25055",
+      "nodeId": "25055",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25059",
+      "nodeId": "25059",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25123",
+      "nodeId": "25123",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25124",
+      "nodeId": "25124",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25125",
+      "nodeId": "25125",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25126",
+      "nodeId": "25126",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25127",
+      "nodeId": "25127",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25128",
+      "nodeId": "25128",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25202",
+      "nodeId": "25202",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25203",
+      "nodeId": "25203",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25204",
+      "nodeId": "25204",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25205",
+      "nodeId": "25205",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25206",
+      "nodeId": "25206",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25207",
+      "nodeId": "25207",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/25208",
+      "nodeId": "25208",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/20350",
+      "nodeId": "20350",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/20864",
+      "nodeId": "20864",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/20977",
+      "nodeId": "20977",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/20978",
+      "nodeId": "20978",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    },
+    {
+      "path": "/node/20979",
+      "nodeId": "20979",
+      "status": "skipped",
+      "reason": "PDF text is empty/image-only (rerun with --allow-ocr)"
+    }
+  ]
+}

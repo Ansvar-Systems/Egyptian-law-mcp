@@ -1,0 +1,58 @@
+Egyptian Law MCP -- Manshurat.org Full Corpus Ingestion
+=======================================================
+Source: https://manshurat.org/taxonomy/term/23
+Rate limit: 1.5s between requests
+Limit: 30 laws
+Resuming from checkpoint
+
+Using 16400 previously discovered law paths.
+
+Total discovered: 16400 laws
+Already processed: 370
+To process: 30
+
+[1/30] SKIP: /node/71335 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[2/30] SKIP: /node/71357 -- no parseable article sections (مادة/Article) found in extracted text
+[3/30] SKIP: /node/71358 -- no parseable article sections (مادة/Article) found in extracted text
+[4/30] SKIP: /node/71499 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[5/30] SKIP: /node/71334 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[6/30] OK: eg-law-214-2020 (6 provisions, pdftotext)
+[7/30] OK: eg-law-211-2020 (3 provisions, pdftotext)
+[8/30] OK: eg-law-212-2020 (16 provisions, pdftotext)
+[9/30] OK: eg-law-213-2020 (3 provisions, pdftotext)
+[10/30] SKIP: /node/68932 -- no parseable article sections (مادة/Article) found in extracted text
+[11/30] SKIP: /node/68933 -- no parseable article sections (مادة/Article) found in extracted text
+[12/30] OK: eg-law-210-2020 (7 provisions, pdftotext)
+[13/30] SKIP: /node/68931 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[14/30] OK: eg-law-206-2020 (20 provisions, pdftotext)
+[15/30] SKIP: /node/68157 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[16/30] SKIP: /node/68159 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[17/30] SKIP: /node/68156 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[18/30] SKIP: /node/68155 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[19/30] SKIP: /node/68152 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[20/30] SKIP: /node/68153 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[21/30] SKIP: /node/68154 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[22/30] SKIP: /node/68149 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[23/30] SKIP: /node/68151 -- PDF text is empty/image-only (rerun with --allow-ocr)
+[24/30] SKIP: /node/68148 -- no parseable article sections (مادة/Article) found in extracted text
+[25/30] OK: eg-law-176-2020 (2 provisions, pdftotext)
+[26/30] OK: eg-law-177-2020 (3 provisions, pdftotext)
+[27/30] OK: eg-law-178-2020 (2 provisions, pdftotext)
+[28/30] OK: eg-law-179-2020 (3 provisions, pdftotext)
+[29/30] OK: eg-law-180-2020 (3 provisions, pdftotext)
+[30/30] OK: eg-law-181-2020 (3 provisions, pdftotext)
+
+
+Ingestion Summary
+-----------------
+Laws discovered: 16400
+Processed:       30
+Ingested:        12
+Skipped:         18
+Errors:          0
+Documents:       12
+Provisions:      71
+Definitions:     0
+OCR docs:        0
+Report:          /home/ansvar/Projects/mcps/law-mcps/Egyptian-law-mcp/data/source-manshurat/ingestion-report.json
+Total seeds on disk: 157
