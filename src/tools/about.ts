@@ -4,7 +4,7 @@
 
 import type Database from '@ansvar/mcp-sqlite';
 import { detectCapabilities, readDbMetadata } from '../capabilities.js';
-import { SERVER_NAME, REPOSITORY_URL } from '../constants.js';
+import { SERVER_NAME, SERVER_VERSION, REPOSITORY_URL } from '../constants.js';
 
 export interface AboutContext {
   version: string;
@@ -25,31 +25,41 @@ export function getAbout(db: InstanceType<typeof Database>, context: AboutContex
   const caps = detectCapabilities(db);
   const meta = readDbMetadata(db);
 
+  const euRefs = safeCount(db, 'SELECT COUNT(*) as count FROM eu_references');
+
+  const stats: Record<string, number> = {
+    documents: safeCount(db, 'SELECT COUNT(*) as count FROM legal_documents'),
+    provisions: safeCount(db, 'SELECT COUNT(*) as count FROM legal_provisions'),
+    definitions: safeCount(db, 'SELECT COUNT(*) as count FROM definitions'),
+  };
+
+  if (euRefs > 0) {
+    stats.eu_documents = safeCount(db, 'SELECT COUNT(*) as count FROM eu_documents');
+    stats.eu_references = euRefs;
+  }
+
   return {
-    server: SERVER_NAME,
+    name: 'Egyptian Law MCP',
     version: context.version,
-    repository: REPOSITORY_URL,
-    database: {
-      fingerprint: context.fingerprint,
-      built_at: context.dbBuilt,
-      tier: meta.tier,
-      schema_version: meta.schema_version,
-      capabilities: [...caps],
+    jurisdiction: 'EG',
+    description: 'Egyptian Law MCP — legislation via Model Context Protocol',
+    stats,
+    data_sources: [
+      {
+        name: 'Egyptian Public Laws Portal',
+        url: 'https://portal.investment.gov.eg',
+        authority: 'General Authority for Investment and Free Zones',
+      },
+    ],
+    freshness: {
+      database_built: context.dbBuilt,
     },
-    statistics: {
-      documents: safeCount(db, 'SELECT COUNT(*) as count FROM legal_documents'),
-      provisions: safeCount(db, 'SELECT COUNT(*) as count FROM legal_provisions'),
-      definitions: safeCount(db, 'SELECT COUNT(*) as count FROM definitions'),
-      eu_documents: safeCount(db, 'SELECT COUNT(*) as count FROM eu_documents'),
-      eu_references: safeCount(db, 'SELECT COUNT(*) as count FROM eu_references'),
-    },
-    data_source: {
-      name: 'Public Laws Portal',
-      authority: 'Ministry of Investment and Foreign Trade (Egypt)',
-      url: 'https://portal.investment.gov.eg/publiclaws',
-      license: 'Government website terms (official public portal)',
-      jurisdiction: 'EG',
-      languages: ['ar', 'en'],
+    disclaimer:
+      'This is a research tool, not legal advice. Verify critical citations against official sources.',
+    network: {
+      name: 'Ansvar MCP Network',
+      open_law: 'https://ansvar.eu/open-law',
+      directory: 'https://ansvar.ai/mcp',
     },
   };
 }
